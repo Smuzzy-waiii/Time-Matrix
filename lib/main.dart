@@ -14,40 +14,52 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text("My Time App")), body: Time());
+    return Scaffold(appBar: AppBar(title: Text("My Time App")), body: Grid());
   }
 }
 
-class Time extends StatefulWidget {
-  @override
-  _TimeState createState() => _TimeState();
-}
-
-List<Widget> generateButtonList() {
-  List<Widget> button_list = [];
-  for (var i = 0; i < 24 * 4; i++) {
-    button_list.add(RaisedButton(
-      color: Colors.grey,
-      child: Text(i.toString()),
-      onPressed: () {},
+List<Widget> generateGridColumns() {
+  List<Widget> buttonrows = [];
+  for (var i = 0; i < 24; i++) {
+    buttonrows.add(Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          child: Text("${(i + 1) < 10 ? '0${i + 1}:00' : '${i + 1}:00'}"),
+        ),
+        RaisedButton(
+          onPressed: () {},
+          //child: Text("${i + 1}:00-${i + 1}:15"),
+        ),
+        RaisedButton(
+          onPressed: () {},
+          //child: Text("${i + 1}:15-${i + 1}:30"),
+        ),
+        RaisedButton(
+          onPressed: () {},
+          //child: Text("${i + 1}:30-${i + 1}:45"),
+        ),
+        RaisedButton(
+          onPressed: () {},
+          //child: Text("${i + 1}:45-${i + 2}:00"),
+        )
+      ],
     ));
   }
-  print(button_list);
-  return button_list;
+  return buttonrows;
 }
 
-class _TimeState extends State<Time> {
-  List<Widget> button_list = generateButtonList();
+class Grid extends StatefulWidget {
+  @override
+  _GridState createState() => _GridState();
+}
 
+class _GridState extends State<Grid> {
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 5,
-      childAspectRatio: 1,
-      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-      mainAxisSpacing: 4.0,
-      crossAxisSpacing: 4.0,
-      children: button_list,
+    return ListView(
+      children: generateGridColumns(),
     );
   }
 }

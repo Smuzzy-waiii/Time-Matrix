@@ -2,8 +2,20 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: Time(),
+    home: Home(),
   ));
+}
+
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: AppBar(title: Text("My Time App")), body: Time());
+  }
 }
 
 class Time extends StatefulWidget {
@@ -11,45 +23,31 @@ class Time extends StatefulWidget {
   _TimeState createState() => _TimeState();
 }
 
-List<List<Widget>> generateButtonList() {
-  List<List<Widget>> button_list = [];
-  for (var i = 0; i < 24; i++) {
-    button_list.add(<Widget>[]);
-    for (var j = 0; j < 4; j++) {
-      button_list[i].add(RaisedButton(
-        color: Colors.grey,
-        onPressed: () {},
-      ));
-    }
+List<Widget> generateButtonList() {
+  List<Widget> button_list = [];
+  for (var i = 0; i < 24 * 4; i++) {
+    button_list.add(RaisedButton(
+      color: Colors.grey,
+      child: Text(i.toString()),
+      onPressed: () {},
+    ));
   }
   print(button_list);
   return button_list;
 }
 
-List<Widget> generateRowList(List<List<Widget>> button_list) {
-  List<Widget> row_list = [];
-  for (var day in button_list) {
-    row_list.add(Row(
-      children: day,
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    ));
-  }
-  return row_list;
-}
-
 class _TimeState extends State<Time> {
-  List<List<Widget>> button_list = generateButtonList();
+  List<Widget> button_list = generateButtonList();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("My Time App"),
-        ),
-        body: Column(
-          children: generateRowList(button_list),
-          mainAxisSize: MainAxisSize.min,
-        ));
+    return GridView.count(
+      crossAxisCount: 5,
+      childAspectRatio: 1,
+      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+      mainAxisSpacing: 4.0,
+      crossAxisSpacing: 4.0,
+      children: button_list,
+    );
   }
 }

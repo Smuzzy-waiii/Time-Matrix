@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 void main() {
   runApp(MaterialApp(
     home: Home(),
-    theme: new ThemeData(scaffoldBackgroundColor: Colors.black),
+    //theme: new ThemeData(scaffoldBackgroundColor: Colors.black),
   ));
 }
 
@@ -15,68 +15,12 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text("My Time App")), body: Grid());
+    return Scaffold(
+        backgroundColor: Colors.black,
+        appBar:
+            AppBar(backgroundColor: Colors.green, title: Text("My Time App")),
+        body: Grid());
   }
-}
-
-List<Widget> generateGridColumns() {
-  List<Widget> buttonrows = [];
-  int buttonsize = 40;
-
-  for (var i = 0; i < 24; i++) {
-    buttonrows.add(Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          child: Text(
-            "${(i + 1) < 10 ? '0${i + 1}:00' : '${i + 1}:00'}",
-          ),
-        ),
-        Container(
-          height: 30,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: RaisedButton(
-              onPressed: () {},
-              //child: Text("${i + 1}:00-${i + 1}:15"),
-            ),
-          ),
-        ),
-        Container(
-          height: 30,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: RaisedButton(
-              onPressed: () {},
-              //child: Text("${i + 1}:00-${i + 1}:15"),
-            ),
-          ),
-        ),
-        Container(
-          height: 30,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: RaisedButton(
-              onPressed: () {},
-              //child: Text("${i + 1}:00-${i + 1}:15"),
-            ),
-          ),
-        ),
-        Container(
-          height: 30,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: RaisedButton(
-              onPressed: () {},
-              //child: Text("${i + 1}:00-${i + 1}:15"),
-            ),
-          ),
-        )
-      ],
-    ));
-  }
-  return buttonrows;
 }
 
 class Grid extends StatefulWidget {
@@ -109,12 +53,11 @@ class _GridState extends State<Grid> {
                           flex: 2,
                           child: Container(
                             alignment: Alignment.center,
-                            color: Colors.grey[350],
+                            color: Colors.black,
                             padding: EdgeInsets.fromLTRB(0, 1, 1, 0),
                             child: Text(
-                              "${(i) < 10 ? '0${i}:00' : '${i + 1}:00'} AM",
-                              //style: TextStyle(fontSize: 10),
-                            ),
+                                "${(i) < 10 ? '0${i}:00' : '${i + 1}:00'} AM",
+                                style: TextStyle(color: Colors.white)),
                           ),
                         ),
                         for (i = 0; i < 4; i++) ...[
@@ -126,9 +69,12 @@ class _GridState extends State<Grid> {
                                     borderRadius: BorderRadius.circular(10.0)),
                                 onPressed: () {},
                                 color: Colors.white,
-                                child: Text(
-                                  "00-15",
-                                  style: TextStyle(fontSize: 5),
+                                child: FittedBox(
+                                  fit: BoxFit.contain,
+                                  child: Text(
+                                    "00-15",
+                                    style: TextStyle(fontSize: 15),
+                                  ),
                                 ),
                               ),
                             ),

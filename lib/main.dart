@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:time_app/DB_funcs.dart';
+import 'package:time_app/database_helper.dart';
+import 'package:time_app/test.dart';
+
+import 'help_functions.dart';
 
 void main() {
   runApp(MaterialApp(
-      home: Home(),
+      initialRoute: '/',
+      routes: {'/': (context) => Home(), '/test': (context) => Test()},
       theme: new ThemeData(
           primaryColor: Colors.orange,
           elevatedButtonTheme: ElevatedButtonThemeData(
@@ -26,22 +34,28 @@ class _HomeState extends State<Home> {
   }
 }
 
+void save(List buttondata, Map color_names) async {
+  Database db = await DatabaseHelper.instance.database;
+  if (await rowExists() == false) {
+    await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
+        <dynamic>['date'] + buttondata.map((e) => color_names[e]).toList());
+  } else {
+    await db.rawDelete("Delete from my_table where date = ?", ['date']);
+
+    await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
+        <dynamic>['date'] + buttondata.map((e) => color_names[e]).toList());
+  }
+}
+
 class Grid extends StatefulWidget {
   @override
   _GridState createState() => _GridState();
 }
 
-int gi_to_li(int i, int j) {
-  //Grid indices to List index
-  int topPos = j + 1;
-  int sidePos = i + 1;
-  return 4 * (sidePos - 1) + topPos - 1;
-}
-
 class _GridState extends State<Grid> {
   bool fillmode = false;
   Color fillcolor = Colors.red;
-  List<Color> colordata = List<Color>.generate(24 * 4, (index) => null);
+  //List colordata = ;
   List<Color> colors = [
     Colors.white,
     Colors.red,
@@ -59,6 +73,20 @@ class _GridState extends State<Grid> {
     Colors.orange: 'Orange',
     Colors.yellow: 'Yellow',
   };
+  Map rev_color_names;
+  List<Color> colordata = List.generate(24 * 4, (index) => null);
+
+  @override
+  void initState() {
+    rev_color_names = color_names.map((k, v) => MapEntry(v, k));
+    loadColorData(rev_color_names).then((value) {
+      setState(() {
+        colordata = value;
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -178,7 +206,11 @@ class _GridState extends State<Grid> {
                     },
                   ),
                 ),
-                ElevatedButton(onPressed: () {}, child: Text("Save")),
+                ElevatedButton(
+                    onPressed: () {
+                      save(colordata, color_names);
+                    },
+                    child: Text("Save")),
                 Text(
                   "Fill Mode:",
                   style: TextStyle(color: Colors.white),
@@ -220,7 +252,23 @@ class _GridState extends State<Grid> {
                             fillcolor = colors[index + 1];
                           });
                         },
-                )
+                ),
+                /*ElevatedButton(
+                  child: Text("Refresh Data"),
+                  onPressed: () {
+                    loadColorData(rev_color_names).then((value) {
+                      setState(() {
+                        colordata = value;
+                      });
+                    });
+                  },
+                ),
+                ElevatedButton(
+                  child: Text("Switch"),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/test');
+                  },
+                )*/
               ],
             ),
           ),

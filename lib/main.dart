@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:time_app/DB_funcs.dart';
 import 'package:time_app/database_helper.dart';
 import 'package:time_app/test.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'help_functions.dart';
 
@@ -12,9 +13,10 @@ void main() {
       initialRoute: '/',
       routes: {'/': (context) => Home(), '/test': (context) => Test()},
       theme: new ThemeData(
-          primaryColor: Colors.orange,
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(primary: Colors.blue)))));
+        primaryColor: Colors.orange,
+        //elevatedButtonTheme: ElevatedButtonThemeData(
+        //style: ElevatedButton.styleFrom(primary: Colors.blue)))));
+      )));
 }
 
 class Home extends StatefulWidget {
@@ -26,11 +28,19 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black,
-        appBar: AppBar(
-            /*backgroundColor: Colors.yellow[900],*/ title:
-                Text("My Time App")),
-        body: Grid());
+      backgroundColor: Colors.black,
+      appBar: AppBar(centerTitle: true, title: Text("My Time App")),
+      body: Grid(),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.orange,
+        selectedItemColor: Colors.black,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.analytics), label: "Analytics")
+        ],
+      ),
+    );
   }
 }
 
@@ -74,7 +84,7 @@ class _GridState extends State<Grid> {
     Colors.yellow: 'Yellow',
   };
   Map rev_color_names;
-  List<Color> colordata = List.generate(24 * 4, (index) => null);
+  List<Color> colordata;
 
   @override
   void initState() {
@@ -95,97 +105,106 @@ class _GridState extends State<Grid> {
           flex: 3,
           child: Container(
             padding: EdgeInsetsDirectional.all(5),
-            child: ListView.separated(
-                separatorBuilder: (BuildContext context, int index) {
-                  return SizedBox(
-                    height: 3,
-                  );
-                },
-                itemCount: 25,
-                itemBuilder: (_, i) {
-                  return Row(
-                      //mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Expanded(
-                          flex: 2,
-                          child: Container(
-                              alignment: Alignment.center,
-                              color: Colors.black,
-                              padding: EdgeInsets.fromLTRB(0, 1, 1, 0),
-                              child: Text(() {
-                                i -= 1;
-                                if (i == -1) {
-                                  return "Time";
-                                } else if (i == 0) {
-                                  return "12:00AM";
-                                } else if (i < 12 && i > 0) {
-                                  return "${(i) < 10 ? '0${i}:00AM' : '${i}:00AM'}";
-                                } else if (i == 12) {
-                                  return "12:00PM";
-                                } else if (i > 12 && i < 24) {
-                                  return "${(i - 12) < 10 ? '0${i - 12}:00PM' : '${i - 12}:00PM'}";
-                                }
-                              }(), style: TextStyle(color: Colors.white))),
-                        ),
-                        if (i != -1)
-                          for (int j = 0; j < 4; j++) ...[
+            child: colordata == null
+                ? SpinKitFadingCircle(
+                    color: Colors.white,
+                  )
+                : ListView.separated(
+                    separatorBuilder: (BuildContext context, int index) {
+                      return SizedBox(
+                        height: 3,
+                      );
+                    },
+                    itemCount: 25,
+                    itemBuilder: (_, i) {
+                      return Row(
+                          //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
                             Expanded(
-                              child: AspectRatio(
-                                aspectRatio: 1.5,
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(9.0)),
-                                        primary:
-                                            (colordata[gi_to_li(i, j)] != null)
-                                                ? colordata[gi_to_li(i, j)]
-                                                : Colors.white),
-                                    onPressed: () {
-                                      setState(() {
-                                        Color currColor =
-                                            (colordata[gi_to_li(i, j)] != null)
-                                                ? colordata[gi_to_li(i, j)]
-                                                : Colors.white;
-                                        int pos = colors.indexOf(currColor);
-                                        if (fillmode) {
-                                          colordata[gi_to_li(i, j)] = fillcolor;
-                                        } else {
-                                          colordata[gi_to_li(i, j)] =
-                                              colors[pos + 1];
-                                        }
-                                      });
-                                    },
-                                    /*color: (colordata[gi_to_li(i, j)] != null)
+                              flex: 2,
+                              child: Container(
+                                  alignment: Alignment.center,
+                                  color: Colors.black,
+                                  padding: EdgeInsets.fromLTRB(0, 1, 1, 0),
+                                  child: Text(() {
+                                    i -= 1;
+                                    if (i == -1) {
+                                      return "Time";
+                                    } else if (i == 0) {
+                                      return "12:00AM";
+                                    } else if (i < 12 && i > 0) {
+                                      return "${(i) < 10 ? '0${i}:00AM' : '${i}:00AM'}";
+                                    } else if (i == 12) {
+                                      return "12:00PM";
+                                    } else if (i > 12 && i < 24) {
+                                      return "${(i - 12) < 10 ? '0${i - 12}:00PM' : '${i - 12}:00PM'}";
+                                    }
+                                  }(), style: TextStyle(color: Colors.white))),
+                            ),
+                            if (i != -1)
+                              for (int j = 0; j < 4; j++) ...[
+                                Expanded(
+                                  child: AspectRatio(
+                                    aspectRatio: 1.5,
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(9.0)),
+                                            primary:
+                                                (colordata[gi_to_li(i, j)] !=
+                                                        null)
+                                                    ? colordata[gi_to_li(i, j)]
+                                                    : Colors.white),
+                                        onPressed: () {
+                                          setState(() {
+                                            Color currColor =
+                                                (colordata[gi_to_li(i, j)] !=
+                                                        null)
+                                                    ? colordata[gi_to_li(i, j)]
+                                                    : Colors.white;
+                                            int pos = colors.indexOf(currColor);
+                                            if (fillmode) {
+                                              colordata[gi_to_li(i, j)] =
+                                                  fillcolor;
+                                            } else {
+                                              colordata[gi_to_li(i, j)] =
+                                                  colors[pos + 1];
+                                            }
+                                          });
+                                        },
+                                        /*color: (colordata[gi_to_li(i, j)] != null)
                                         ? colordata[gi_to_li(i, j)]
                                         : Colors.white,*/
-                                    child: i != -1
-                                        ? Container()
-                                        : FittedBox(
-                                            fit: BoxFit.contain,
-                                            child: Text(
-                                              () {
-                                                return "${15 * j}-${15 * (j + 1)}";
-                                              }(),
-                                              style: TextStyle(fontSize: 15),
-                                            ))),
-                              ),
-                            ),
-                            if (j < 3) SizedBox(width: 3)
-                          ],
-                        if (i == -1)
-                          for (int j = 0; j < 4; j++) ...[
-                            Expanded(
-                                child: Text(
-                                    "${(j == 0) ? '0${15 * j}-${15 * (j + 1)}' : '${15 * j}-${15 * (j + 1)}'}",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.white))),
-                            if (j < 3) SizedBox(width: 3)
-                          ]
-                      ]);
-                }),
+                                        child: i != -1
+                                            ? Container()
+                                            : FittedBox(
+                                                fit: BoxFit.contain,
+                                                child: Text(
+                                                  () {
+                                                    return "${15 * j}-${15 * (j + 1)}";
+                                                  }(),
+                                                  style:
+                                                      TextStyle(fontSize: 15),
+                                                ))),
+                                  ),
+                                ),
+                                if (j < 3) SizedBox(width: 3)
+                              ],
+                            if (i == -1)
+                              for (int j = 0; j < 4; j++) ...[
+                                Expanded(
+                                    child: Text(
+                                        "${(j == 0) ? '0${15 * j}-${15 * (j + 1)}' : '${15 * j}-${15 * (j + 1)}'}",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.white))),
+                                if (j < 3) SizedBox(width: 3)
+                              ]
+                          ]);
+                    }),
           ),
         ),
         Flexible(
@@ -262,13 +281,21 @@ class _GridState extends State<Grid> {
                       });
                     });
                   },
-                ),
+                ),*/
                 ElevatedButton(
-                  child: Text("Switch"),
+                  child: Text("Refresh"),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/test');
+                    //Navigator.pushNamed(context, '/test');
+                    setState(() {
+                      colordata = null;
+                    });
+                    loadColorData(rev_color_names).then((value) {
+                      setState(() {
+                        colordata = value;
+                      });
+                    });
                   },
-                )*/
+                )
               ],
             ),
           ),

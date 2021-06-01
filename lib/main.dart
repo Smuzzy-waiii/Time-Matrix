@@ -272,30 +272,25 @@ class _GridState extends State<Grid> {
                           });
                         },
                 ),
-                /*ElevatedButton(
-                  child: Text("Refresh Data"),
-                  onPressed: () {
-                    loadColorData(rev_color_names).then((value) {
-                      setState(() {
-                        colordata = value;
-                      });
-                    });
-                  },
-                ),*/
-                ElevatedButton(
-                  child: Text("Refresh"),
-                  onPressed: () {
-                    //Navigator.pushNamed(context, '/test');
-                    setState(() {
-                      colordata = null;
-                    });
-                    loadColorData(rev_color_names).then((value) {
-                      setState(() {
-                        colordata = value;
-                      });
-                    });
-                  },
-                )
+                // ElevatedButton(
+                //   child: Text("Test"),
+                //   Navigator.pushNamed(context, '/test');
+                //     });
+                //   },
+                // ),
+                // ElevatedButton(
+                //   child: Text("Refresh"),
+                //   onPressed: (){
+                //     setState(() {
+                //       colordata = null;
+                //     });
+                //     loadColorData(rev_color_names).then((value) {
+                //       setState(() {
+                //         colordata = value;
+                //       });
+                //     });
+                // },
+                // )
               ],
             ),
           ),

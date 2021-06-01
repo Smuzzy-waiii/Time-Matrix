@@ -17,10 +17,13 @@ String bindings() {
   return s;
 }
 
-Future<List<Color>> loadColorData(Map rev_color_names) async {
-  bool _rowExists = (await rowExists()) == true;
+Future<List<Color>> loadColorData(String date, Map rev_color_names) async {
+  bool _rowExists = (await rowExists(date)) == true;
   List _colordata = _rowExists
-      ? (await loadData()).map((e) => rev_color_names[e]).toList().cast<Color>()
+      ? (await loadData(date))
+          .map((e) => rev_color_names[e])
+          .toList()
+          .cast<Color>()
       : List<Color>.generate(24 * 4, (index) => null);
   return _colordata;
 }

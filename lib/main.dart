@@ -45,11 +45,11 @@ class _HomeState extends State<Home> {
   }
 }
 
-void save(List buttondata, Map color_names) async {
+void save(List buttondata, String date, Map color_names) async {
   Database db = await DatabaseHelper.instance.database;
-  if (await rowExists() == false) {
+  if (await rowExists(date) == false) {
     await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
-        <dynamic>['date'] + buttondata.map((e) => color_names[e]).toList());
+        <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
   } else {
     await db.rawDelete("Delete from my_table where date = ?", ['date']);
 
@@ -92,7 +92,7 @@ class _GridState extends State<Grid> {
   @override
   void initState() {
     rev_color_names = color_names.map((k, v) => MapEntry(v, k));
-    loadColorData(rev_color_names).then((value) {
+    loadColorData(date, rev_color_names).then((value) {
       setState(() {
         colordata = value;
       });
@@ -230,7 +230,7 @@ class _GridState extends State<Grid> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      save(colordata, color_names);
+                      save(colordata, date, color_names);
                     },
                     child: Text("Save")),
                 Text(
@@ -276,26 +276,31 @@ class _GridState extends State<Grid> {
                         },
                 ),
                 ElevatedButton(
-                  child: Text("Test"),
+                  child: Text("Print"),
                   onPressed: () {
                     //Navigator.pushNamed(context, '/test');
-
                     print(date);
                   },
                 ),
-                // ElevatedButton(
-                //   child: Text("Refresh"),
-                //   onPressed: (){
-                //     setState(() {
-                //       colordata = null;
-                //     });
-                //     loadColorData(rev_color_names).then((value) {
-                //       setState(() {
-                //         colordata = value;
-                //       });
-                //     });
-                // },
-                // )
+                ElevatedButton(
+                  child: Text("Test"),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/test');
+                  },
+                ),
+                ElevatedButton(
+                  child: Text("Refresh"),
+                  onPressed: () {
+                    setState(() {
+                      colordata = null;
+                    });
+                    loadColorData(date, rev_color_names).then((value) {
+                      setState(() {
+                        colordata = value;
+                      });
+                    });
+                  },
+                )
               ],
             ),
           ),

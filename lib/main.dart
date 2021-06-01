@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:time_app/DB_funcs.dart';
@@ -75,6 +76,7 @@ class _GridState extends State<Grid> {
     Colors.yellow,
     Colors.white
   ];
+
   Map color_names = {
     Colors.white: 'white',
     Colors.red: 'Red',
@@ -85,6 +87,7 @@ class _GridState extends State<Grid> {
   };
   Map rev_color_names;
   List<Color> colordata;
+  String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
   @override
   void initState() {
@@ -272,12 +275,14 @@ class _GridState extends State<Grid> {
                           });
                         },
                 ),
-                // ElevatedButton(
-                //   child: Text("Test"),
-                //   Navigator.pushNamed(context, '/test');
-                //     });
-                //   },
-                // ),
+                ElevatedButton(
+                  child: Text("Test"),
+                  onPressed: () {
+                    //Navigator.pushNamed(context, '/test');
+
+                    print(date);
+                  },
+                ),
                 // ElevatedButton(
                 //   child: Text("Refresh"),
                 //   onPressed: (){

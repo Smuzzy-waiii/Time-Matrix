@@ -107,108 +107,148 @@ class _GridState extends State<Grid> {
         Expanded(
           flex: 3,
           child: Container(
-            padding: EdgeInsetsDirectional.all(5),
-            child: colordata == null
-                ? SpinKitFadingCircle(
-                    color: Colors.white,
-                  )
-                : ListView.separated(
-                    separatorBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                        height: 3,
-                      );
-                    },
-                    itemCount: 25,
-                    itemBuilder: (_, i) {
-                      return Row(
-                          //mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  color: Colors.black,
-                                  padding: EdgeInsets.fromLTRB(0, 1, 1, 0),
-                                  child: Text(() {
-                                    i -= 1;
-                                    if (i == -1) {
-                                      return "Time";
-                                    } else if (i == 0) {
-                                      return "12:00AM";
-                                    } else if (i < 12 && i > 0) {
-                                      return "${(i) < 10 ? '0${i}:00AM' : '${i}:00AM'}";
-                                    } else if (i == 12) {
-                                      return "12:00PM";
-                                    } else if (i > 12 && i < 24) {
-                                      return "${(i - 12) < 10 ? '0${i - 12}:00PM' : '${i - 12}:00PM'}";
-                                    }
-                                  }(), style: TextStyle(color: Colors.white))),
-                            ),
-                            if (i != -1)
-                              for (int j = 0; j < 4; j++) ...[
-                                Expanded(
-                                  child: AspectRatio(
-                                    aspectRatio: 1.5,
-                                    child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(9.0)),
-                                            primary:
-                                                (colordata[gi_to_li(i, j)] !=
-                                                        null)
-                                                    ? colordata[gi_to_li(i, j)]
-                                                    : Colors.white),
-                                        onPressed: () {
-                                          setState(() {
-                                            Color currColor =
-                                                (colordata[gi_to_li(i, j)] !=
-                                                        null)
-                                                    ? colordata[gi_to_li(i, j)]
-                                                    : Colors.white;
-                                            int pos = colors.indexOf(currColor);
-                                            if (fillmode) {
-                                              colordata[gi_to_li(i, j)] =
-                                                  fillcolor;
-                                            } else {
-                                              colordata[gi_to_li(i, j)] =
-                                                  colors[pos + 1];
-                                            }
-                                          });
-                                        },
-                                        /*color: (colordata[gi_to_li(i, j)] != null)
-                                        ? colordata[gi_to_li(i, j)]
-                                        : Colors.white,*/
-                                        child: i != -1
-                                            ? Container()
-                                            : FittedBox(
-                                                fit: BoxFit.contain,
-                                                child: Text(
-                                                  () {
-                                                    return "${15 * j}-${15 * (j + 1)}";
-                                                  }(),
-                                                  style:
-                                                      TextStyle(fontSize: 15),
-                                                ))),
-                                  ),
-                                ),
-                                if (j < 3) SizedBox(width: 3)
+              padding: EdgeInsetsDirectional.all(5),
+              child: colordata == null
+                  ? SpinKitFadingCircle(
+                      color: Colors.white,
+                    )
+                  : CustomScrollView(slivers: <Widget>[
+                      SliverPadding(
+                        padding: EdgeInsets.fromLTRB(10, 0, 0, 5),
+                        sliver: SliverAppBar(
+                            floating: true,
+                            centerTitle: true,
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                IconButton(
+                                    icon: Icon(Icons.keyboard_arrow_left),
+                                    //iconSize: 10
+                                    onPressed: () {}),
+                                FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: TextButton(
+                                        onPressed: () {},
+                                        child: Text(
+                                          date,
+                                          style: TextStyle(
+                                            fontSize: 19,
+                                          ),
+                                        ))),
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.keyboard_arrow_right))
                               ],
-                            if (i == -1)
-                              for (int j = 0; j < 4; j++) ...[
-                                Expanded(
-                                    child: Text(
-                                        "${(j == 0) ? '0${15 * j}-${15 * (j + 1)}' : '${15 * j}-${15 * (j + 1)}'}",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.white))),
-                                if (j < 3) SizedBox(width: 3)
-                              ]
-                          ]);
-                    }),
-          ),
+                            ),
+                            shape: ContinuousRectangleBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                      ),
+                      SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int i) {
+                          if (i % 2 != 0) {
+                            return SizedBox(height: 3);
+                          } else {
+                            i = i ~/ 2;
+                            return Row(
+                                //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        color: Colors.black,
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 1, 1, 0),
+                                        child: Text(() {
+                                          i -= 1;
+                                          if (i == -1) {
+                                            return "Time";
+                                          } else if (i == 0) {
+                                            return "12:00AM";
+                                          } else if (i < 12 && i > 0) {
+                                            return "${(i) < 10 ? '0${i}:00AM' : '${i}:00AM'}";
+                                          } else if (i == 12) {
+                                            return "12:00PM";
+                                          } else if (i > 12 && i < 24) {
+                                            return "${(i - 12) < 10 ? '0${i - 12}:00PM' : '${i - 12}:00PM'}";
+                                          }
+                                        }(),
+                                            style: TextStyle(
+                                                color: Colors.white))),
+                                  ),
+                                  if (i != -1)
+                                    for (int j = 0; j < 4; j++) ...[
+                                      Expanded(
+                                        child: AspectRatio(
+                                          aspectRatio: 1.5,
+                                          child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              9.0)),
+                                                  primary: (colordata[
+                                                              gi_to_li(i, j)] !=
+                                                          null)
+                                                      ? colordata[
+                                                          gi_to_li(i, j)]
+                                                      : Colors.white),
+                                              onPressed: () {
+                                                setState(() {
+                                                  Color currColor = (colordata[
+                                                              gi_to_li(i, j)] !=
+                                                          null)
+                                                      ? colordata[
+                                                          gi_to_li(i, j)]
+                                                      : Colors.white;
+                                                  int pos =
+                                                      colors.indexOf(currColor);
+                                                  if (fillmode) {
+                                                    colordata[gi_to_li(i, j)] =
+                                                        fillcolor;
+                                                  } else {
+                                                    colordata[gi_to_li(i, j)] =
+                                                        colors[pos + 1];
+                                                  }
+                                                });
+                                              },
+                                              /*color: (colordata[gi_to_li(i, j)] != null)
+                                          ? colordata[gi_to_li(i, j)]
+                                          : Colors.white,*/
+                                              child: i != -1
+                                                  ? Container()
+                                                  : FittedBox(
+                                                      fit: BoxFit.contain,
+                                                      child: Text(
+                                                        () {
+                                                          return "${15 * j}-${15 * (j + 1)}";
+                                                        }(),
+                                                        style: TextStyle(
+                                                            fontSize: 15),
+                                                      ))),
+                                        ),
+                                      ),
+                                      if (j < 3) SizedBox(width: 3)
+                                    ],
+                                  if (i == -1)
+                                    for (int j = 0; j < 4; j++) ...[
+                                      Expanded(
+                                          child: Text(
+                                              "${(j == 0) ? '0${15 * j}-${15 * (j + 1)}' : '${15 * j}-${15 * (j + 1)}'}",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.white))),
+                                      if (j < 3) SizedBox(width: 3)
+                                    ]
+                                ]);
+                          }
+                        },
+                        childCount: 25 * 2,
+                      )),
+                    ])),
         ),
         Flexible(
           child: Padding(

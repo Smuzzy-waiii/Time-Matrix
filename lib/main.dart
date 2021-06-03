@@ -124,7 +124,26 @@ class _GridState extends State<Grid> {
                                 IconButton(
                                     icon: Icon(Icons.keyboard_arrow_left),
                                     //iconSize: 10
-                                    onPressed: () {}),
+                                    onPressed: () {
+                                      setState(() {
+                                        colordata = null;
+                                      });
+
+                                      DateTime _date =
+                                          DateFormat("dd-MM-yyyy").parse(date);
+                                      _date = _date.subtract(Duration(days: 1));
+
+                                      setState(() {
+                                        date = DateFormat("dd-MM-yyyy")
+                                            .format(_date);
+                                      });
+                                      loadColorData(date, rev_color_names)
+                                          .then((value) {
+                                        setState(() {
+                                          colordata = value;
+                                        });
+                                      });
+                                    }),
                                 FittedBox(
                                     fit: BoxFit.contain,
                                     child: TextButton(
@@ -136,8 +155,28 @@ class _GridState extends State<Grid> {
                                           ),
                                         ))),
                                 IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(Icons.keyboard_arrow_right))
+                                  icon: Icon(Icons.keyboard_arrow_right),
+                                  onPressed: () {
+                                    setState(() {
+                                      colordata = null;
+                                    });
+
+                                    DateTime _date =
+                                        DateFormat("dd-MM-yyyy").parse(date);
+                                    _date = _date.add(Duration(days: 1));
+
+                                    setState(() {
+                                      date = DateFormat("dd-MM-yyyy")
+                                          .format(_date);
+                                    });
+                                    loadColorData(date, rev_color_names)
+                                        .then((value) {
+                                      setState(() {
+                                        colordata = value;
+                                      });
+                                    });
+                                  },
+                                )
                               ],
                             ),
                             shape: ContinuousRectangleBorder(

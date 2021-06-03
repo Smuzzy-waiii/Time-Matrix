@@ -14,13 +14,13 @@ _query() async {
   DatabaseHelper helper = await DatabaseHelper.instance;
   Database db = await helper.database;
 
-  //await db.rawDelete("Delete from my_table where date = ?", ['date']);
+  await db.delete("my_table");
   // raw query
   //List<Map> result = await db.rawQuery("PRAGMA table_info([my_table]);");
   List<Map> result = await db.rawQuery("SELECT * FROM my_table");
 
   // print the results
-  result.forEach((row) => print(row));
+  result.forEach((row) => print(row['date']));
   // {_id: 2, name: Mary, age: 32}
 }
 

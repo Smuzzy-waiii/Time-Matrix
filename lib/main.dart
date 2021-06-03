@@ -118,7 +118,28 @@ class _GridState extends State<Grid> {
                         sliver: SliverAppBar(
                             floating: true,
                             centerTitle: true,
-                            title: Text(date),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                IconButton(
+                                    icon: Icon(Icons.keyboard_arrow_left),
+                                    //iconSize: 10
+                                    onPressed: () {}),
+                                FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: TextButton(
+                                        onPressed: () {},
+                                        child: Text(
+                                          date,
+                                          style: TextStyle(
+                                            fontSize: 19,
+                                          ),
+                                        ))),
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.keyboard_arrow_right))
+                              ],
+                            ),
                             shape: ContinuousRectangleBorder(
                                 borderRadius: BorderRadius.circular(10))),
                       ),

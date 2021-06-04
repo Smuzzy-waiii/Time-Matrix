@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 import 'DB_funcs.dart';
 
@@ -17,10 +18,11 @@ String bindings() {
   return s;
 }
 
-Future<List<Color>> loadColorData(String date, Map rev_color_names) async {
-  bool _rowExists = (await rowExists(date)) == true;
+Future<List<Color>> loadColorData(
+    Database db, String date, Map rev_color_names) async {
+  bool _rowExists = (await rowExists(db, date)) == true;
   List _colordata = _rowExists
-      ? (await loadData(date))
+      ? (await loadData(db, date))
           .map((e) => rev_color_names[e])
           .toList()
           .cast<Color>()

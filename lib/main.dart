@@ -45,17 +45,19 @@ class _HomeState extends State<Home> {
   }
 }
 
-void save(List buttondata, String date, Map color_names) async {
+void save(Database db, List buttondata, String date, Map color_names) async {
   Database db = await DatabaseHelper.instance.database;
-  if (await rowExists(date) == false) {
+  if (await rowExists(db, date) == false) {
     await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
         <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
   } else {
-    await db.rawDelete("Delete from my_table where date = ?", ['date']);
+    await db.rawDelete("Delete from my_table where date = ?", [date]);
 
     await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
-        <dynamic>['date'] + buttondata.map((e) => color_names[e]).toList());
+        <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
   }
+  await createView();
+  print("This happened");
 }
 
 class Grid extends StatefulWidget {
@@ -88,13 +90,19 @@ class _GridState extends State<Grid> {
   Map rev_color_names;
   List<Color> colordata;
   String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  Database db;
 
   @override
   void initState() {
     rev_color_names = color_names.map((k, v) => MapEntry(v, k));
-    loadColorData(date, rev_color_names).then((value) {
-      setState(() {
-        colordata = value;
+    initDB().then((_db) {
+      createView().then((v) {
+        loadColorData(_db, date, rev_color_names).then((value) {
+          setState(() {
+            db = _db;
+            colordata = value;
+          });
+        });
       });
     });
     super.initState();
@@ -137,7 +145,7 @@ class _GridState extends State<Grid> {
                                         date = DateFormat("dd-MM-yyyy")
                                             .format(_date);
                                       });
-                                      loadColorData(date, rev_color_names)
+                                      loadColorData(db, date, rev_color_names)
                                           .then((value) {
                                         setState(() {
                                           colordata = value;
@@ -169,7 +177,7 @@ class _GridState extends State<Grid> {
                                       date = DateFormat("dd-MM-yyyy")
                                           .format(_date);
                                     });
-                                    loadColorData(date, rev_color_names)
+                                    loadColorData(db, date, rev_color_names)
                                         .then((value) {
                                       setState(() {
                                         colordata = value;
@@ -309,7 +317,7 @@ class _GridState extends State<Grid> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      save(colordata, date, color_names);
+                      save(db, colordata, date, color_names);
                     },
                     child: Text("Save")),
                 Text(
@@ -354,32 +362,32 @@ class _GridState extends State<Grid> {
                           });
                         },
                 ),
-                ElevatedButton(
-                  child: Text("Print"),
-                  onPressed: () {
-                    //Navigator.pushNamed(context, '/test');
-                    print(date);
-                  },
-                ),
-                ElevatedButton(
-                  child: Text("Test"),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/test');
-                  },
-                ),
-                ElevatedButton(
-                  child: Text("Refresh"),
-                  onPressed: () {
-                    setState(() {
-                      colordata = null;
-                    });
-                    loadColorData(date, rev_color_names).then((value) {
-                      setState(() {
-                        colordata = value;
-                      });
-                    });
-                  },
-                )
+                // ElevatedButton(
+                //   child: Text("Print"),
+                //   onPressed: () {
+                //     Navigator.pushNamed(context, '/test');
+                //     print(date);
+                //   },
+                // ),
+                // ElevatedButton(
+                //   child: Text("Test"),
+                //   onPressed: () {
+                //     Navigator.pushNamed(context, '/test');
+                //   },
+                // ),
+                // ElevatedButton(
+                //   child: Text("Refresh"),
+                //   onPressed: () {
+                //     setState(() {
+                //       colordata = null;
+                //     });
+                //     loadColorData(db, date, rev_color_names).then((value) {
+                //       setState(() {
+                //         colordata = value;
+                //       });
+                //     });
+                //   },
+                // )
               ],
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:time_app/DB_funcs.dart';
@@ -44,17 +45,19 @@ class _HomeState extends State<Home> {
   }
 }
 
-void save(List buttondata, Map color_names) async {
+void save(Database db, List buttondata, String date, Map color_names) async {
   Database db = await DatabaseHelper.instance.database;
-  if (await rowExists() == false) {
+  if (await rowExists(db, date) == false) {
     await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
-        <dynamic>['date'] + buttondata.map((e) => color_names[e]).toList());
+        <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
   } else {
-    await db.rawDelete("Delete from my_table where date = ?", ['date']);
+    await db.rawDelete("Delete from my_table where date = ?", [date]);
 
     await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
-        <dynamic>['date'] + buttondata.map((e) => color_names[e]).toList());
+        <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
   }
+  await createView();
+  print("This happened");
 }
 
 class Grid extends StatefulWidget {
@@ -75,6 +78,7 @@ class _GridState extends State<Grid> {
     Colors.yellow,
     Colors.white
   ];
+
   Map color_names = {
     Colors.white: 'white',
     Colors.red: 'Red',
@@ -85,13 +89,20 @@ class _GridState extends State<Grid> {
   };
   Map rev_color_names;
   List<Color> colordata;
+  String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  Database db;
 
   @override
   void initState() {
     rev_color_names = color_names.map((k, v) => MapEntry(v, k));
-    loadColorData(rev_color_names).then((value) {
-      setState(() {
-        colordata = value;
+    initDB().then((_db) {
+      createView().then((v) {
+        loadColorData(_db, date, rev_color_names).then((value) {
+          setState(() {
+            db = _db;
+            colordata = value;
+          });
+        });
       });
     });
     super.initState();
@@ -104,108 +115,240 @@ class _GridState extends State<Grid> {
         Expanded(
           flex: 3,
           child: Container(
-            padding: EdgeInsetsDirectional.all(5),
-            child: colordata == null
-                ? SpinKitFadingCircle(
-                    color: Colors.white,
-                  )
-                : ListView.separated(
-                    separatorBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                        height: 3,
-                      );
-                    },
-                    itemCount: 25,
-                    itemBuilder: (_, i) {
-                      return Row(
-                          //mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  color: Colors.black,
-                                  padding: EdgeInsets.fromLTRB(0, 1, 1, 0),
-                                  child: Text(() {
-                                    i -= 1;
-                                    if (i == -1) {
-                                      return "Time";
-                                    } else if (i == 0) {
-                                      return "12:00AM";
-                                    } else if (i < 12 && i > 0) {
-                                      return "${(i) < 10 ? '0${i}:00AM' : '${i}:00AM'}";
-                                    } else if (i == 12) {
-                                      return "12:00PM";
-                                    } else if (i > 12 && i < 24) {
-                                      return "${(i - 12) < 10 ? '0${i - 12}:00PM' : '${i - 12}:00PM'}";
-                                    }
-                                  }(), style: TextStyle(color: Colors.white))),
-                            ),
-                            if (i != -1)
-                              for (int j = 0; j < 4; j++) ...[
-                                Expanded(
-                                  child: AspectRatio(
-                                    aspectRatio: 1.5,
-                                    child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(9.0)),
-                                            primary:
-                                                (colordata[gi_to_li(i, j)] !=
-                                                        null)
-                                                    ? colordata[gi_to_li(i, j)]
-                                                    : Colors.white),
-                                        onPressed: () {
+              padding: EdgeInsetsDirectional.all(5),
+              child: colordata == null
+                  ? SpinKitFadingCircle(
+                      color: Colors.white,
+                    )
+                  : CustomScrollView(slivers: <Widget>[
+                      SliverPadding(
+                        padding: EdgeInsets.fromLTRB(10, 0, 0, 5),
+                        sliver: SliverAppBar(
+                            floating: true,
+                            centerTitle: true,
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                IconButton(
+                                    icon: Icon(Icons.keyboard_arrow_left),
+                                    //iconSize: 10
+                                    onPressed: () {
+                                      setState(() {
+                                        colordata = null;
+                                      });
+
+                                      DateTime _date =
+                                          DateFormat("dd-MM-yyyy").parse(date);
+                                      _date = _date.subtract(Duration(days: 1));
+
+                                      setState(() {
+                                        date = DateFormat("dd-MM-yyyy")
+                                            .format(_date);
+                                      });
+                                      loadColorData(db, date, rev_color_names)
+                                          .then((value) {
+                                        setState(() {
+                                          colordata = value;
+                                        });
+                                      });
+                                    }),
+                                FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: TextButton(
+                                        onPressed: () async {
                                           setState(() {
-                                            Color currColor =
-                                                (colordata[gi_to_li(i, j)] !=
-                                                        null)
-                                                    ? colordata[gi_to_li(i, j)]
-                                                    : Colors.white;
-                                            int pos = colors.indexOf(currColor);
-                                            if (fillmode) {
-                                              colordata[gi_to_li(i, j)] =
-                                                  fillcolor;
-                                            } else {
-                                              colordata[gi_to_li(i, j)] =
-                                                  colors[pos + 1];
-                                            }
+                                            colordata = null;
+                                          });
+                                          DateTime currDate =
+                                              DateFormat('dd-MM-yyyy')
+                                                  .parse(date);
+                                          final DateTime picked =
+                                              await showDatePicker(
+                                                  context: context,
+                                                  initialDate: currDate,
+                                                  firstDate:
+                                                      DateTime(1970, 1, 1),
+                                                  lastDate: DateTime.now());
+                                          if (picked != null &&
+                                              picked != currDate)
+                                            setState(() {
+                                              date = DateFormat("dd-MM-yyyy")
+                                                  .format(picked);
+                                            });
+                                          loadColorData(
+                                                  db, date, rev_color_names)
+                                              .then((value) {
+                                            setState(() {
+                                              colordata = value;
+                                            });
                                           });
                                         },
-                                        /*color: (colordata[gi_to_li(i, j)] != null)
-                                        ? colordata[gi_to_li(i, j)]
-                                        : Colors.white,*/
-                                        child: i != -1
-                                            ? Container()
-                                            : FittedBox(
-                                                fit: BoxFit.contain,
-                                                child: Text(
-                                                  () {
-                                                    return "${15 * j}-${15 * (j + 1)}";
-                                                  }(),
-                                                  style:
-                                                      TextStyle(fontSize: 15),
-                                                ))),
-                                  ),
-                                ),
-                                if (j < 3) SizedBox(width: 3)
+                                        child: Text(
+                                          date,
+                                          style: TextStyle(
+                                            fontSize: 19,
+                                          ),
+                                        ))),
+                                IconButton(
+                                  icon: Icon(Icons.keyboard_arrow_right),
+                                  onPressed: () {
+                                    DateTime currDate =
+                                        DateFormat('dd-MM-yyyy').parse(date);
+                                    DateTime todayte = DateFormat('dd-MM-yyyy')
+                                        .parse(DateFormat('dd-MM-yyyy').format(
+                                            DateTime
+                                                .now())); //loses time information
+                                    if (currDate == todayte) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (_) => AlertDialog(
+                                                title: Text(
+                                                    "Future Date Selected !"),
+                                                content: Text(
+                                                    "Time travel not possible"),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: Text("OK"))
+                                                ],
+                                              ));
+                                    } else {
+                                      setState(() {
+                                        colordata = null;
+                                      });
+
+                                      DateTime _date =
+                                          DateFormat("dd-MM-yyyy").parse(date);
+                                      _date = _date.add(Duration(days: 1));
+
+                                      setState(() {
+                                        date = DateFormat("dd-MM-yyyy")
+                                            .format(_date);
+                                      });
+                                      loadColorData(db, date, rev_color_names)
+                                          .then((value) {
+                                        setState(() {
+                                          colordata = value;
+                                        });
+                                      });
+                                    }
+                                    ;
+                                  },
+                                )
                               ],
-                            if (i == -1)
-                              for (int j = 0; j < 4; j++) ...[
-                                Expanded(
-                                    child: Text(
-                                        "${(j == 0) ? '0${15 * j}-${15 * (j + 1)}' : '${15 * j}-${15 * (j + 1)}'}",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.white))),
-                                if (j < 3) SizedBox(width: 3)
-                              ]
-                          ]);
-                    }),
-          ),
+                            ),
+                            shape: ContinuousRectangleBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                      ),
+                      SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int i) {
+                          if (i % 2 != 0) {
+                            return SizedBox(height: 3);
+                          } else {
+                            i = i ~/ 2;
+                            return Row(
+                                //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        color: Colors.black,
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 1, 1, 0),
+                                        child: Text(() {
+                                          i -= 1;
+                                          if (i == -1) {
+                                            return "Time";
+                                          } else if (i == 0) {
+                                            return "12:00AM";
+                                          } else if (i < 12 && i > 0) {
+                                            return "${(i) < 10 ? '0${i}:00AM' : '${i}:00AM'}";
+                                          } else if (i == 12) {
+                                            return "12:00PM";
+                                          } else if (i > 12 && i < 24) {
+                                            return "${(i - 12) < 10 ? '0${i - 12}:00PM' : '${i - 12}:00PM'}";
+                                          }
+                                        }(),
+                                            style: TextStyle(
+                                                color: Colors.white))),
+                                  ),
+                                  if (i != -1)
+                                    for (int j = 0; j < 4; j++) ...[
+                                      Expanded(
+                                        child: AspectRatio(
+                                          aspectRatio: 1.5,
+                                          child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              9.0)),
+                                                  primary: (colordata[
+                                                              gi_to_li(i, j)] !=
+                                                          null)
+                                                      ? colordata[
+                                                          gi_to_li(i, j)]
+                                                      : Colors.white),
+                                              onPressed: () {
+                                                setState(() {
+                                                  Color currColor = (colordata[
+                                                              gi_to_li(i, j)] !=
+                                                          null)
+                                                      ? colordata[
+                                                          gi_to_li(i, j)]
+                                                      : Colors.white;
+                                                  int pos =
+                                                      colors.indexOf(currColor);
+                                                  if (fillmode) {
+                                                    colordata[gi_to_li(i, j)] =
+                                                        fillcolor;
+                                                  } else {
+                                                    colordata[gi_to_li(i, j)] =
+                                                        colors[pos + 1];
+                                                  }
+                                                });
+                                              },
+                                              /*color: (colordata[gi_to_li(i, j)] != null)
+                                          ? colordata[gi_to_li(i, j)]
+                                          : Colors.white,*/
+                                              child: i != -1
+                                                  ? Container()
+                                                  : FittedBox(
+                                                      fit: BoxFit.contain,
+                                                      child: Text(
+                                                        () {
+                                                          return "${15 * j}-${15 * (j + 1)}";
+                                                        }(),
+                                                        style: TextStyle(
+                                                            fontSize: 15),
+                                                      ))),
+                                        ),
+                                      ),
+                                      if (j < 3) SizedBox(width: 3)
+                                    ],
+                                  if (i == -1)
+                                    for (int j = 0; j < 4; j++) ...[
+                                      Expanded(
+                                          child: Text(
+                                              "${(j == 0) ? '0${15 * j}-${15 * (j + 1)}' : '${15 * j}-${15 * (j + 1)}'}",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.white))),
+                                      if (j < 3) SizedBox(width: 3)
+                                    ]
+                                ]);
+                          }
+                        },
+                        childCount: 25 * 2,
+                      )),
+                    ])),
         ),
         Flexible(
           child: Padding(
@@ -227,7 +370,7 @@ class _GridState extends State<Grid> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      save(colordata, color_names);
+                      save(db, colordata, date, color_names);
                     },
                     child: Text("Save")),
                 Text(
@@ -273,23 +416,30 @@ class _GridState extends State<Grid> {
                         },
                 ),
                 // ElevatedButton(
+                //   child: Text("Print"),
+                //   onPressed: () {
+                //     Navigator.pushNamed(context, '/test');
+                //     print(date);
+                //   },
+                // ),
+                // ElevatedButton(
                 //   child: Text("Test"),
-                //   Navigator.pushNamed(context, '/test');
-                //     });
+                //   onPressed: () {
+                //     Navigator.pushNamed(context, '/test');
                 //   },
                 // ),
                 // ElevatedButton(
                 //   child: Text("Refresh"),
-                //   onPressed: (){
+                //   onPressed: () {
                 //     setState(() {
                 //       colordata = null;
                 //     });
-                //     loadColorData(rev_color_names).then((value) {
+                //     loadColorData(db, date, rev_color_names).then((value) {
                 //       setState(() {
                 //         colordata = value;
                 //       });
                 //     });
-                // },
+                //   },
                 // )
               ],
             ),

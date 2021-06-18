@@ -52,8 +52,9 @@ class _GridState extends State<Grid> {
   };
   Map rev_color_names;
   List<Color> colordata;
-  String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
   Database db;
+  String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
   @override
   void initState() {

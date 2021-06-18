@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:time_app/DB_funcs.dart';
-import 'package:time_app/help_functions.dart';
+import 'package:time_app/helpers/DB_funcs.dart';
+import 'package:time_app/helpers/help_functions.dart';
 
-import 'database_helper.dart';
+import '../helpers/database_helper.dart';
 
 class Test extends StatefulWidget {
   @override

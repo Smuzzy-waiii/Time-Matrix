@@ -7,20 +7,27 @@ import 'package:time_app/helpers/database_helper.dart';
 import 'package:time_app/screens/test.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../helpers/help_functions.dart';
+import 'package:collection/collection.dart';
+
+Function eq = const ListEquality().equals;
 
 void save(Database db, List buttondata, String date, Map color_names) async {
   Database db = await DatabaseHelper.instance.database;
+
   if (await rowExists(db, date) == false) {
-    await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
-        <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
+    if (!eq(buttondata, List.generate(24 * 4, (index) => null))) {
+      await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
+          <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
+    }
   } else {
     await db.rawDelete("Delete from my_table where date = ?", [date]);
-
-    await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
-        <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
+    if (!eq(buttondata, List.generate(24 * 4, (index) => null))) {
+      await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
+          <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
+    }
   }
   await createView();
-  print("This happened");
+  //print("This happened");
 }
 
 class Grid extends StatefulWidget {

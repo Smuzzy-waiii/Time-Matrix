@@ -36,8 +36,10 @@ class _TestState extends State<Test> {
             ElevatedButton(
               child: Text('Read'),
               onPressed: () async {
+                DatabaseHelper helper = await DatabaseHelper.instance;
+                Database db = await helper.database;
                 //DatabaseHelper dbHelper = await DatabaseHelper.instance;
-                await _query();
+                await getRange(db, "15-06-2021", "19-06-2021");
               },
             )
           ],

@@ -88,124 +88,123 @@ class _GridState extends State<Grid> {
                       SliverPadding(
                         padding: EdgeInsets.fromLTRB(10, 0, 0, 5),
                         sliver: SliverAppBar(
-                            floating: true,
-                            centerTitle: true,
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                IconButton(
-                                    icon: Icon(Icons.keyboard_arrow_left),
-                                    //iconSize: 10
-                                    onPressed: () {
-                                      setState(() {
-                                        colordata = null;
-                                      });
-
-                                      DateTime _date =
-                                          DateFormat("dd-MM-yyyy").parse(date);
-                                      _date = _date.subtract(Duration(days: 1));
-
-                                      setState(() {
-                                        date = DateFormat("dd-MM-yyyy")
-                                            .format(_date);
-                                      });
-                                      loadColorData(db, date, rev_color_names)
-                                          .then((value) {
-                                        setState(() {
-                                          colordata = value;
-                                        });
-                                      });
-                                    }),
-                                FittedBox(
-                                    fit: BoxFit.contain,
-                                    child: TextButton(
-                                        onPressed: () async {
-                                          setState(() {
-                                            colordata = null;
-                                          });
-                                          DateTime currDate =
-                                              DateFormat('dd-MM-yyyy')
-                                                  .parse(date);
-                                          final DateTime picked =
-                                              await showDatePicker(
-                                                  context: context,
-                                                  initialDate: currDate,
-                                                  firstDate:
-                                                      DateTime(1970, 1, 1),
-                                                  lastDate: DateTime.now());
-                                          if (picked != null &&
-                                              picked != currDate)
-                                            setState(() {
-                                              date = DateFormat("dd-MM-yyyy")
-                                                  .format(picked);
-                                            });
-                                          loadColorData(
-                                                  db, date, rev_color_names)
-                                              .then((value) {
-                                            setState(() {
-                                              colordata = value;
-                                            });
-                                          });
-                                        },
-                                        child: Text(
-                                          date,
-                                          style: TextStyle(
-                                            fontSize: 19,
-                                          ),
-                                        ))),
-                                IconButton(
-                                  icon: Icon(Icons.keyboard_arrow_right),
+                          floating: true,
+                          centerTitle: true,
+                          shape: ContinuousRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(
+                                  icon: Icon(Icons.keyboard_arrow_left),
+                                  //iconSize: 10
                                   onPressed: () {
-                                    DateTime currDate =
-                                        DateFormat('dd-MM-yyyy').parse(date);
-                                    DateTime todayte = DateFormat('dd-MM-yyyy')
-                                        .parse(DateFormat('dd-MM-yyyy').format(
-                                            DateTime
-                                                .now())); //loses time information
-                                    if (currDate == todayte) {
-                                      showDialog(
-                                          context: context,
-                                          builder: (_) => AlertDialog(
-                                                title: Text(
-                                                    "Future Date Selected !"),
-                                                content: Text(
-                                                    "Time travel not possible"),
-                                                actions: [
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                      child: Text("OK"))
-                                                ],
-                                              ));
-                                    } else {
-                                      setState(() {
-                                        colordata = null;
-                                      });
+                                    setState(() {
+                                      colordata = null;
+                                    });
 
-                                      DateTime _date =
-                                          DateFormat("dd-MM-yyyy").parse(date);
-                                      _date = _date.add(Duration(days: 1));
+                                    DateTime _date =
+                                        DateFormat("dd-MM-yyyy").parse(date);
+                                    _date = _date.subtract(Duration(days: 1));
 
+                                    setState(() {
+                                      date = DateFormat("dd-MM-yyyy")
+                                          .format(_date);
+                                    });
+                                    loadColorData(db, date, rev_color_names)
+                                        .then((value) {
                                       setState(() {
-                                        date = DateFormat("dd-MM-yyyy")
-                                            .format(_date);
+                                        colordata = value;
                                       });
-                                      loadColorData(db, date, rev_color_names)
-                                          .then((value) {
+                                    });
+                                  }),
+                              FittedBox(
+                                  fit: BoxFit.contain,
+                                  child: TextButton(
+                                      onPressed: () async {
                                         setState(() {
-                                          colordata = value;
+                                          colordata = null;
                                         });
+                                        DateTime currDate =
+                                            DateFormat('dd-MM-yyyy')
+                                                .parse(date);
+                                        final DateTime picked =
+                                            await showDatePicker(
+                                                context: context,
+                                                initialDate: currDate,
+                                                firstDate: DateTime(1970, 1, 1),
+                                                lastDate: DateTime.now());
+                                        if (picked != null &&
+                                            picked != currDate)
+                                          setState(() {
+                                            date = DateFormat("dd-MM-yyyy")
+                                                .format(picked);
+                                          });
+                                        loadColorData(db, date, rev_color_names)
+                                            .then((value) {
+                                          setState(() {
+                                            colordata = value;
+                                          });
+                                        });
+                                      },
+                                      child: Text(
+                                        date,
+                                        style: TextStyle(
+                                          fontSize: 19,
+                                        ),
+                                      ))),
+                              IconButton(
+                                icon: Icon(Icons.keyboard_arrow_right),
+                                onPressed: () {
+                                  DateTime currDate =
+                                      DateFormat('dd-MM-yyyy').parse(date);
+                                  DateTime todayte = DateFormat('dd-MM-yyyy')
+                                      .parse(DateFormat('dd-MM-yyyy').format(
+                                          DateTime
+                                              .now())); //loses time information
+                                  if (currDate == todayte) {
+                                    showDialog(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                              title: Text(
+                                                  "Future Date Selected !"),
+                                              content: Text(
+                                                  "Time travel not possible"),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text("OK"))
+                                              ],
+                                            ));
+                                  } else {
+                                    setState(() {
+                                      colordata = null;
+                                    });
+
+                                    DateTime _date =
+                                        DateFormat("dd-MM-yyyy").parse(date);
+                                    _date = _date.add(Duration(days: 1));
+
+                                    setState(() {
+                                      date = DateFormat("dd-MM-yyyy")
+                                          .format(_date);
+                                    });
+                                    loadColorData(db, date, rev_color_names)
+                                        .then((value) {
+                                      setState(() {
+                                        colordata = value;
                                       });
-                                    }
-                                    ;
-                                  },
-                                )
-                              ],
-                            ),
-                            shape: ContinuousRectangleBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                    });
+                                  }
+                                  ;
+                                },
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                       SliverList(
                           delegate: SliverChildBuilderDelegate(

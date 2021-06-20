@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:time_app/helpers/help_functions.dart';
 
 class Analytics extends StatefulWidget {
   @override
@@ -14,6 +15,8 @@ class _AnalyticsState extends State<Analytics> {
   Widget gap = SizedBox(
     height: 5,
   );
+  Map counts;
+  int total;
 
   @override
   void initState() {
@@ -22,13 +25,18 @@ class _AnalyticsState extends State<Analytics> {
     fromdate = todate.subtract(Duration(days: 7));
     todate_str = DateFormat('dd-MM-yyyy').format(todate);
     fromdate_str = DateFormat('dd-MM-yyyy').format(fromdate);
+
+    getColorCounts(fromdate_str, todate_str).then((value) => setState(() {
+          counts = value;
+          total = counts["total"];
+        }));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTextStyle(
-      style: TextStyle(color: Colors.white, fontSize: 25),
+      style: TextStyle(color: Colors.white, fontSize: 22),
       child: CustomScrollView(
         slivers: [
           SliverPadding(
@@ -128,7 +136,7 @@ class _AnalyticsState extends State<Analytics> {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   gap,
                   Text("Days filled:"),
@@ -142,28 +150,46 @@ class _AnalyticsState extends State<Analytics> {
                   Text("Daily Activites:"),
                   gap,
                   Text("Sleep:"),
+                  gap,
+                  Text("Unfilled:"),
                 ]),
                 Column(
                   children: [
                     gap,
-                    Text("0"),
+                    counts == null
+                        ? Text('loading...')
+                        : Text(counts['days'].toString()),
                     gap,
-                    Text("0hrs 0mins (0%)"),
+                    counts == null
+                        ? Text('loading...')
+                        : Text(counts_to_str(counts["studied"], total)),
                     gap,
-                    Text("0hrs 0mins (0%)"),
+                    counts == null
+                        ? Text('loading...')
+                        : Text(counts_to_str(counts["relaxing"], total)),
                     gap,
-                    Text("0hrs 0mins (0%)"),
+                    counts == null
+                        ? Text('loading...')
+                        : Text(counts_to_str(counts["class"], total)),
                     gap,
-                    Text("0hrs 0mins (0%)"),
+                    counts == null
+                        ? Text('loading...')
+                        : Text(counts_to_str(counts["DA"], total)),
                     gap,
-                    Text("0hrs 0mins (0%)"),
+                    counts == null
+                        ? Text('loading...')
+                        : Text(counts_to_str(counts["sleep"], total)),
+                    gap,
+                    counts == null
+                        ? Text('loading...')
+                        : Text(counts_to_str(counts["unfilled"], total)),
                   ],
                 )
               ]),
               Divider(
                 //thickness: 5,
-                indent: 18,
-                endIndent: 18,
+                indent: 10,
+                endIndent: 10,
                 color: Colors.grey,
               )
             ]),

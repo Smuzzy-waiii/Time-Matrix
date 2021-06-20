@@ -39,6 +39,6 @@ Future<List> getRange(Database db, String fromdate, String todate) async {
       'SELECT * FROM my_view WHERE date BETWEEN ? and ?', [fromdate, todate]);
   //result.forEach((row) => print(row.values));
   List range = result.map((row) => row.values.toList()).toList();
-  range.forEach((row) => print(row));
+  //range.forEach((row) => print(row));
   return range;
 }

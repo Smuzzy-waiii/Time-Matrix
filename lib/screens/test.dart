@@ -49,7 +49,7 @@ class _TestState extends State<Test> {
                 DatabaseHelper helper = await DatabaseHelper.instance;
                 Database db = await helper.database;
                 //DatabaseHelper dbHelper = await DatabaseHelper.instance;
-                await getRange(db, "15-06-2021", "19-06-2021");
+                await getColorCounts("20-06-2021", "20-06-2021");
               },
             ),
             ElevatedButton(

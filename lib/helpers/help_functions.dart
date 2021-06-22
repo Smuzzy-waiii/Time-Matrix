@@ -68,7 +68,8 @@ String counts_to_str(int counts, int total) {
   int tot_mins = counts * 15;
   int hrs = tot_mins ~/ 60;
   int mins = tot_mins % 60;
-  String pctage = ((counts / total) * 100).toStringAsFixed(2);
+  double raw_pctage = ((counts / total) * 100);
+  String pctage = raw_pctage.isNaN ? "0" : raw_pctage.toStringAsFixed(2);
   return "${hrs}hrs ${mins}mins (${pctage}%)";
 }
 

@@ -35,166 +35,191 @@ class _AnalyticsState extends State<Analytics> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTextStyle(
-      style: TextStyle(color: Colors.white, fontSize: 22),
-      child: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: EdgeInsets.all(5),
-            sliver: SliverAppBar(
-              floating: true,
-              shape: ContinuousRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              title: FittedBox(
-                fit: BoxFit.contain,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'From Date:',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    TextButton(
-                      child: Text(
-                        fromdate_str,
-                        style: TextStyle(fontSize: 18),
+    return RefreshIndicator(
+      onRefresh: () async {
+        Map value = await getColorCounts(fromdate_str, todate_str);
+        setState(() {
+          counts = value;
+          total = counts["total"];
+        });
+      },
+      child: DefaultTextStyle(
+        style: TextStyle(color: Colors.white, fontSize: 20),
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.all(5),
+              sliver: SliverAppBar(
+                floating: true,
+                shape: ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                title: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'From Date:',
+                        style: TextStyle(fontSize: 15),
                       ),
-                      onPressed: () async {
-                        final DateTime picked = await showDatePicker(
-                            context: context,
-                            initialDate: fromdate,
-                            firstDate: DateTime(1970, 1, 1),
-                            lastDate: DateTime.now());
-                        if (picked.isAfter(todate)) {
-                          showDialog(
+                      TextButton(
+                        child: Text(
+                          fromdate_str,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        onPressed: () async {
+                          final DateTime picked = await showDatePicker(
                               context: context,
-                              builder: (_) => AlertDialog(
-                                    title: Text("Error!"),
-                                    content: Text(
-                                        "From-date cannot exceed To-date. Please set to-date first."),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text("OK"))
-                                    ],
-                                  ));
-                        } else {
-                          setState(() {
-                            fromdate = picked;
-                            fromdate_str =
-                                DateFormat("dd-MM-yyyy").format(fromdate);
-                          });
-                        }
-                      },
-                    ),
-                    Text(
-                      'To Date:',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    TextButton(
-                      child: Text(
-                        todate_str,
-                        style: TextStyle(fontSize: 18),
+                              initialDate: fromdate,
+                              firstDate: DateTime(1970, 1, 1),
+                              lastDate: DateTime.now());
+                          if (picked.isAfter(todate)) {
+                            showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      title: Text("Error!"),
+                                      content: Text(
+                                          "From-date cannot exceed To-date. Please set to-date first."),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("OK"))
+                                      ],
+                                    ));
+                          } else {
+                            setState(() {
+                              fromdate = picked;
+                              fromdate_str =
+                                  DateFormat("dd-MM-yyyy").format(fromdate);
+                            });
+                            Map value =
+                                await getColorCounts(fromdate_str, todate_str);
+                            setState(() {
+                              counts = value;
+                              total = counts["total"];
+                            });
+                          }
+                        },
                       ),
-                      onPressed: () async {
-                        final DateTime picked = await showDatePicker(
-                            context: context,
-                            initialDate: todate,
-                            firstDate: DateTime(1970, 1, 1),
-                            lastDate: DateTime.now());
-                        if (picked.isBefore(fromdate)) {
-                          showDialog(
+                      Text(
+                        'To Date:',
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      TextButton(
+                        child: Text(
+                          todate_str,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        onPressed: () async {
+                          final DateTime picked = await showDatePicker(
                               context: context,
-                              builder: (_) => AlertDialog(
-                                    title: Text("Error!"),
-                                    content: Text(
-                                        "To-date cannot preceed From-date. Please set From-date first."),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text("OK"))
-                                    ],
-                                  ));
-                        } else {
-                          setState(() {
-                            todate = picked;
-                            todate_str =
-                                DateFormat("dd-MM-yyyy").format(todate);
-                          });
-                        }
-                      },
-                    )
-                  ],
+                              initialDate: todate,
+                              firstDate: DateTime(1970, 1, 1),
+                              lastDate: DateTime.now());
+                          if (picked.isBefore(fromdate)) {
+                            showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      title: Text("Error!"),
+                                      content: Text(
+                                          "To-date cannot preceed From-date. Please set From-date first."),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("OK"))
+                                      ],
+                                    ));
+                          } else {
+                            setState(() {
+                              todate = picked;
+                              todate_str =
+                                  DateFormat("dd-MM-yyyy").format(todate);
+                            });
+                            Map value =
+                                await getColorCounts(fromdate_str, todate_str);
+                            setState(() {
+                              counts = value;
+                              total = counts["total"];
+                            });
+                          }
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  gap,
-                  Text("Days filled:"),
-                  gap,
-                  Text("Studied:"),
-                  gap,
-                  Text("Relaxing:"),
-                  gap,
-                  Text("Class hours:"),
-                  gap,
-                  Text("Daily Activites:"),
-                  gap,
-                  Text("Sleep:"),
-                  gap,
-                  Text("Unfilled:"),
-                ]),
-                Column(
-                  children: [
-                    gap,
-                    counts == null
-                        ? Text('loading...')
-                        : Text(counts['days'].toString()),
-                    gap,
-                    counts == null
-                        ? Text('loading...')
-                        : Text(counts_to_str(counts["studied"], total)),
-                    gap,
-                    counts == null
-                        ? Text('loading...')
-                        : Text(counts_to_str(counts["relaxing"], total)),
-                    gap,
-                    counts == null
-                        ? Text('loading...')
-                        : Text(counts_to_str(counts["class"], total)),
-                    gap,
-                    counts == null
-                        ? Text('loading...')
-                        : Text(counts_to_str(counts["DA"], total)),
-                    gap,
-                    counts == null
-                        ? Text('loading...')
-                        : Text(counts_to_str(counts["sleep"], total)),
-                    gap,
-                    counts == null
-                        ? Text('loading...')
-                        : Text(counts_to_str(counts["unfilled"], total)),
-                  ],
-                )
+            SliverList(
+              delegate: SliverChildListDelegate([
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            gap,
+                            Text("Days filled:"),
+                            gap,
+                            Text("Studied:"),
+                            gap,
+                            Text("Relaxing:"),
+                            gap,
+                            Text("Class hours:"),
+                            gap,
+                            Text("Daily Activites:"),
+                            gap,
+                            Text("Sleep:"),
+                            gap,
+                            Text("Unfilled:"),
+                          ]),
+                      Column(
+                        children: [
+                          gap,
+                          counts == null
+                              ? Text('loading...')
+                              : Text(counts['days'].toString()),
+                          gap,
+                          counts == null
+                              ? Text('loading...')
+                              : Text(counts_to_str(counts["studied"], total)),
+                          gap,
+                          counts == null
+                              ? Text('loading...')
+                              : Text(counts_to_str(counts["relaxing"], total)),
+                          gap,
+                          counts == null
+                              ? Text('loading...')
+                              : Text(counts_to_str(counts["class"], total)),
+                          gap,
+                          counts == null
+                              ? Text('loading...')
+                              : Text(counts_to_str(counts["DA"], total)),
+                          gap,
+                          counts == null
+                              ? Text('loading...')
+                              : Text(counts_to_str(counts["sleep"], total)),
+                          gap,
+                          counts == null
+                              ? Text('loading...')
+                              : Text(counts_to_str(counts["unfilled"], total)),
+                        ],
+                      )
+                    ]),
+                Divider(
+                  //thickness: 5,
+                  indent: 10,
+                  endIndent: 10,
+                  color: Colors.grey,
+                ),
               ]),
-              Divider(
-                //thickness: 5,
-                indent: 10,
-                endIndent: 10,
-                color: Colors.grey,
-              )
-            ]),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

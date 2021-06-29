@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pie_chart/pie_chart.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:time_app/helpers/DB_funcs.dart';
 import 'package:time_app/helpers/help_functions.dart';
@@ -36,12 +37,19 @@ _query() async {
 }
 
 class _TestState extends State<Test> {
+  Map<String, double> dataMap = {
+    "Flutter": 5,
+    "React": 3,
+    "Xamarin": 2,
+    "Ionic": 2,
+  };
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
-        child: Row(
+        child: Column(
           children: [
             ElevatedButton(
               child: Text('Read'),
@@ -71,6 +79,18 @@ class _TestState extends State<Test> {
                 List m = List.generate(3, (index) => null);
                 print(eq(l, m));
               },
+            ),
+            PieChart(
+              dataMap: dataMap,
+              chartRadius: MediaQuery.of(context).size.width / 1.5,
+              legendOptions: LegendOptions(
+                showLegendsInRow: true,
+                legendPosition: LegendPosition.bottom,
+                showLegends: true,
+                legendTextStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             )
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:time_app/helpers/help_functions.dart';
+import 'package:pie_chart/pie_chart.dart';
 
 class Analytics extends StatefulWidget {
   @override
@@ -32,6 +33,15 @@ class _AnalyticsState extends State<Analytics> {
         }));
     super.initState();
   }
+
+  Map color_names = {
+    Colors.green: 'Green',
+    Colors.red: 'Red',
+    Colors.blue: 'Blue',
+    Colors.orange: 'Orange',
+    Colors.yellow: 'Yellow',
+    Colors.grey[400]: 'white',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -216,6 +226,24 @@ class _AnalyticsState extends State<Analytics> {
                   endIndent: 10,
                   color: Colors.grey,
                 ),
+                if (counts != null && counts['total'] != 0)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
+                    child: PieChart(
+                      dataMap: forGraph(counts),
+                      colorList: color_names.keys.toList().cast<Color>(),
+                      chartRadius: MediaQuery.of(context).size.width / 1.5,
+                      initialAngleInDegree: -90,
+                      chartValuesOptions: ChartValuesOptions(
+                        showChartValueBackground: true,
+                        showChartValues: true,
+                        showChartValuesInPercentage: true,
+                        showChartValuesOutside: true,
+                        decimalPlaces: 1,
+                      ),
+                    ),
+                  ),
+                //New Widgets Come here
               ]),
             )
           ],

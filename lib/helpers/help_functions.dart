@@ -11,7 +11,7 @@ int gi_to_li(int i, int j) {
   return 4 * (sidePos - 1) + topPos - 1;
 }
 
-//creates the sequence "00:00-00:15","00:15-00:30",... for queries
+//creates the sequence ?,?,?,?,... for queries
 String bindings() {
   String s = '';
   for (var i = 0; i < 97; i++) {
@@ -20,7 +20,8 @@ String bindings() {
   return s;
 }
 
-Future<Map> getColorCounts(String fromdate, String todate) async {
+Future<Map> getColorCounts(String fromdate, String todate,
+    {bool for_graph: false}) async {
   Map counts = {
     "days": 0,
     "studied": 0,
@@ -62,6 +63,18 @@ Future<Map> getColorCounts(String fromdate, String todate) async {
   }
   print(counts);
   return counts;
+}
+
+Map<String, double> forGraph(Map counts) {
+  Map<String, double> newMap = {};
+
+  for (String key in counts.keys) {
+    if (key != 'total' && key != 'days') {
+      int item = counts[key];
+      newMap[key] = item.toDouble();
+    }
+  }
+  return newMap;
 }
 
 String counts_to_str(int counts, int total) {

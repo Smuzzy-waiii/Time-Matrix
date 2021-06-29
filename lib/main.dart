@@ -53,11 +53,11 @@ class _HomeState extends State<Home> {
               icon: Icon(Icons.analytics), label: "Analytics")
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/test');
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.pushNamed(context, '/test');
+      //   },
+      // ),
     );
   }
 }

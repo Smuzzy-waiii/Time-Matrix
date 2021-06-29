@@ -228,12 +228,17 @@ class _AnalyticsState extends State<Analytics> {
                 ),
                 if (counts != null && counts['total'] != 0)
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                     child: PieChart(
                       dataMap: forGraph(counts),
                       colorList: color_names.keys.toList().cast<Color>(),
                       chartRadius: MediaQuery.of(context).size.width / 1.5,
                       initialAngleInDegree: -90,
+                      legendOptions: LegendOptions(
+                        showLegendsInRow: true,
+                        legendPosition: LegendPosition.bottom,
+                        showLegends: true,
+                      ),
                       chartValuesOptions: ChartValuesOptions(
                         showChartValueBackground: true,
                         showChartValues: true,

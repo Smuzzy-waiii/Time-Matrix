@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:pie_chart/pie_chart.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:time_app/helpers/DB_funcs.dart';
 import 'package:time_app/helpers/help_functions.dart';
-
+import 'package:collection/collection.dart';
 import '../helpers/database_helper.dart';
+
+Function eq = const ListEquality().equals;
 
 class Test extends StatefulWidget {
   @override
   _TestState createState() => _TestState();
+}
+
+delete_all() async {
+  DatabaseHelper helper = await DatabaseHelper.instance;
+  Database db = await helper.database;
+  await db.delete("my_table");
+  List<Map> result = await db.rawQuery("PRAGMA table_info([my_table]);");
+  print(result);
 }
 
 _query() async {
@@ -21,24 +32,65 @@ _query() async {
   List<Map> result = await db.rawQuery("SELECT * FROM my_table");
 
   // print the results
-  result.forEach((row) => print(row['date']));
+  result.forEach((row) => print(row.values));
   // {_id: 2, name: Mary, age: 32}
 }
 
 class _TestState extends State<Test> {
+  Map<String, double> dataMap = {
+    "Flutter": 5,
+    "React": 3,
+    "Xamarin": 2,
+    "Ionic": 2,
+  };
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
-        child: Row(
+        child: Column(
           children: [
             ElevatedButton(
               child: Text('Read'),
               onPressed: () async {
+                DatabaseHelper helper = await DatabaseHelper.instance;
+                Database db = await helper.database;
                 //DatabaseHelper dbHelper = await DatabaseHelper.instance;
-                await _query();
+                await getColorCounts("20-06-2021", "20-06-2021");
               },
+            ),
+            ElevatedButton(
+              child: Text("Read All"),
+              onPressed: () async {
+                _query();
+              },
+            ),
+            ElevatedButton(
+              child: Text("Delete all"),
+              onPressed: () {
+                delete_all();
+              },
+            ),
+            ElevatedButton(
+              child: Text("Test"),
+              onPressed: () {
+                List l = [null, null, null];
+                List m = List.generate(3, (index) => null);
+                print(eq(l, m));
+              },
+            ),
+            PieChart(
+              dataMap: dataMap,
+              chartRadius: MediaQuery.of(context).size.width / 1.5,
+              legendOptions: LegendOptions(
+                showLegendsInRow: true,
+                legendPosition: LegendPosition.bottom,
+                showLegends: true,
+                legendTextStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             )
           ],
         ),

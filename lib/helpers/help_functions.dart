@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:time_app/helpers/database_helper.dart';
 
 import 'DB_funcs.dart';
 
@@ -10,12 +11,79 @@ int gi_to_li(int i, int j) {
   return 4 * (sidePos - 1) + topPos - 1;
 }
 
+//creates the sequence ?,?,?,?,... for queries
 String bindings() {
   String s = '';
   for (var i = 0; i < 97; i++) {
     s += (i != 96) ? '?,' : '?';
   }
   return s;
+}
+
+Future<Map> getColorCounts(String fromdate, String todate,
+    {bool for_graph: false}) async {
+  Map counts = {
+    "days": 0,
+    "studied": 0,
+    "relaxing": 0,
+    "class": 0,
+    "DA": 0,
+    "sleep": 0,
+    "unfilled": 0,
+    "total": 0
+  };
+
+  Database db = await DatabaseHelper.instance.database;
+  List range = await getRange(db, fromdate, todate);
+
+  for (List row in range) {
+    counts["days"] += 1;
+    for (var color in row.sublist(1)) {
+      counts["total"] += 1;
+      switch (color) {
+        case "Red":
+          counts["relaxing"] += 1;
+          break;
+        case "Green":
+          counts["studied"] += 1;
+          break;
+        case "Blue":
+          counts["class"] += 1;
+          break;
+        case "Orange":
+          counts["DA"] += 1;
+          break;
+        case "Yellow":
+          counts["sleep"] += 1;
+          break;
+        default:
+          counts["unfilled"] += 1;
+      }
+    }
+  }
+  print(counts);
+  return counts;
+}
+
+Map<String, double> forGraph(Map counts) {
+  Map<String, double> newMap = {};
+
+  for (String key in counts.keys) {
+    if (key != 'total' && key != 'days') {
+      int item = counts[key];
+      newMap[key] = item.toDouble();
+    }
+  }
+  return newMap;
+}
+
+String counts_to_str(int counts, int total) {
+  int tot_mins = counts * 15;
+  int hrs = tot_mins ~/ 60;
+  int mins = tot_mins % 60;
+  double raw_pctage = ((counts / total) * 100);
+  String pctage = raw_pctage.isNaN ? "0" : raw_pctage.toStringAsFixed(2);
+  return "${hrs}hrs ${mins}mins (${pctage}%)";
 }
 
 Future<List<Color>> loadColorData(

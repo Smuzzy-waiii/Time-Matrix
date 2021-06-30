@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:time_app/helpers/DB_funcs.dart';
+import 'package:time_app/helpers/Indicator.dart';
 import 'package:time_app/helpers/database_helper.dart';
 import 'package:time_app/screens/test.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -314,6 +315,7 @@ class _GridState extends State<Grid> {
                     ])),
         ),
         Flexible(
+          flex: 1,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: Column(
@@ -378,6 +380,25 @@ class _GridState extends State<Grid> {
                           });
                         },
                 ),
+
+                /*Container(
+                  color: fillcolor,
+                  child: DropdownButton<String>(
+                    items: colors.map((value) {
+                      return DropdownMenuItem<String>(
+                          value: color_names[value],
+                          child: new Text(
+                            color_names[value],
+                          ));
+                    }).toList(),
+                    value: "${color_names[fillcolor]}",
+                    onChanged: (color) {
+                      setState(() {
+                        fillcolor = rev_color_names[color];
+                      });
+                    },
+                  ),
+                )*/
                 // ElevatedButton(
                 //   child: Text("Print"),
                 //   onPressed: () {

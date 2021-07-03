@@ -11,6 +11,30 @@ int gi_to_li(int i, int j) {
   return 4 * (sidePos - 1) + topPos - 1;
 }
 
+void saveOne(Database db, int i, int j, String date, String color) async {
+  if (await rowExists(db, date) == false) {
+    await db.rawInsert(
+        "INSERT INTO my_table (date, ${genColumnName(gi_to_li(i, j))}) VALUES (?, ?)",
+        [date, color]);
+  } else {
+    await db.rawUpdate(
+        "UPDATE my_table SET ${genColumnName(gi_to_li(i, j))}=? WHERE date=?",
+        [color, date]);
+  }
+}
+
+String genColumnName(int i) {
+  int _hr = (i ~/ 4);
+  String hr = _hr < 10 ? "0$_hr" : "$_hr";
+  int _mins = ((i % 4) * 15);
+  String mins = _mins < 10 ? "0$_mins" : "$_mins";
+  int _minsPlusOne =
+      i % 4 != 3 ? (((i % 4) + 1) * 15) : 0; //  ~/ is integer division
+  String minsPlusOne = _minsPlusOne < 10 ? "0$_minsPlusOne" : "$_minsPlusOne";
+  String column_name = "'$hr:$mins-$hr:$minsPlusOne'";
+  return column_name;
+}
+
 //creates the sequence ?,?,?,?,... for queries
 String bindings() {
   String s = '';
@@ -88,6 +112,8 @@ String counts_to_str(int counts, int total) {
 
 Future<List<Color>> loadColorData(
     Database db, String date, Map rev_color_names) async {
+  await createView();
+
   bool _rowExists = (await rowExists(db, date)) == true;
   List _colordata = _rowExists
       ? (await loadData(db, date))

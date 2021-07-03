@@ -75,23 +75,9 @@ class _TestState extends State<Test> {
             ElevatedButton(
               child: Text("Test"),
               onPressed: () {
-                List l = [null, null, null];
-                List m = List.generate(3, (index) => null);
-                print(eq(l, m));
+                print(invDF("2012-12-13"));
               },
             ),
-            PieChart(
-              dataMap: dataMap,
-              chartRadius: MediaQuery.of(context).size.width / 1.5,
-              legendOptions: LegendOptions(
-                showLegendsInRow: true,
-                legendPosition: LegendPosition.bottom,
-                showLegends: true,
-                legendTextStyle: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
           ],
         ),
       ),

@@ -65,6 +65,15 @@ Future<Map> getColorCounts(String fromdate, String todate,
   return counts;
 }
 
+String invDF(String date) {
+  //convert yyyy-mm-dd into dd-mm-yyyy
+  String yr, mn, dt;
+  yr = date.substring(0, 4);
+  mn = date.substring(5, 7);
+  dt = date.substring(8);
+  return "$dt-$mn-$yr";
+}
+
 Map<String, double> forGraph(Map counts) {
   Map<String, double> newMap = {};
 

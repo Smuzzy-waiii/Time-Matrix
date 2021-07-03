@@ -51,15 +51,6 @@ class _TestState extends State<Test> {
       body: SafeArea(
         child: Column(children: [
           ElevatedButton(
-            child: Text('Read'),
-            onPressed: () async {
-              DatabaseHelper helper = await DatabaseHelper.instance;
-              Database db = await helper.database;
-              //DatabaseHelper dbHelper = await DatabaseHelper.instance;
-              await getColorCounts("20-06-2021", "20-06-2021");
-            },
-          ),
-          ElevatedButton(
             child: Text("Read All"),
             onPressed: () async {
               _query();

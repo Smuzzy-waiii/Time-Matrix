@@ -29,7 +29,7 @@ void save(Database db, List buttondata, String date, Map color_names) async {
           <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
     }
   }
-  await createView();
+  createView();
   //print("This happened");
 }
 

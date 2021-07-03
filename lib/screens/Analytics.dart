@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:time_app/helpers/DB_funcs.dart';
 import 'package:time_app/helpers/help_functions.dart';
 import 'package:pie_chart/pie_chart.dart';
 
@@ -9,6 +11,7 @@ class Analytics extends StatefulWidget {
 }
 
 class _AnalyticsState extends State<Analytics> {
+  Database db;
   DateTime todate;
   DateTime fromdate;
   String todate_str = " ";
@@ -27,10 +30,13 @@ class _AnalyticsState extends State<Analytics> {
     todate_str = DateFormat('yyyy-MM-dd').format(todate);
     fromdate_str = DateFormat('yyyy-MM-dd').format(fromdate);
 
-    getColorCounts(fromdate_str, todate_str).then((value) => setState(() {
-          counts = value;
-          total = counts["total"];
-        }));
+    initDB().then((_db) {
+      db = _db;
+      getColorCounts(db, fromdate_str, todate_str).then((value) => setState(() {
+            counts = value;
+            total = counts["total"];
+          }));
+    });
     super.initState();
   }
 
@@ -47,7 +53,7 @@ class _AnalyticsState extends State<Analytics> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        Map value = await getColorCounts(fromdate_str, todate_str);
+        Map value = await getColorCounts(db, fromdate_str, todate_str);
         setState(() {
           counts = value;
           total = counts["total"];
@@ -105,8 +111,8 @@ class _AnalyticsState extends State<Analytics> {
                               fromdate_str =
                                   DateFormat("yyyy-MM-dd").format(fromdate);
                             });
-                            Map value =
-                                await getColorCounts(fromdate_str, todate_str);
+                            Map value = await getColorCounts(
+                                db, fromdate_str, todate_str);
                             setState(() {
                               counts = value;
                               total = counts["total"];
@@ -150,8 +156,8 @@ class _AnalyticsState extends State<Analytics> {
                               todate_str =
                                   DateFormat("yyyy-MM-dd").format(todate);
                             });
-                            Map value =
-                                await getColorCounts(fromdate_str, todate_str);
+                            Map value = await getColorCounts(
+                                db, fromdate_str, todate_str);
                             setState(() {
                               counts = value;
                               total = counts["total"];

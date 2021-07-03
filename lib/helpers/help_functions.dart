@@ -21,6 +21,7 @@ void saveOne(Database db, int i, int j, String date, String color) async {
         "UPDATE my_table SET ${genColumnName(gi_to_li(i, j))}=? WHERE date=?",
         [color, date]);
   }
+  createView();
 }
 
 String genColumnName(int i) {
@@ -44,7 +45,7 @@ String bindings() {
   return s;
 }
 
-Future<Map> getColorCounts(String fromdate, String todate,
+Future<Map> getColorCounts(Database db, String fromdate, String todate,
     {bool for_graph: false}) async {
   Map counts = {
     "days": 0,
@@ -57,7 +58,6 @@ Future<Map> getColorCounts(String fromdate, String todate,
     "total": 0
   };
 
-  Database db = await DatabaseHelper.instance.database;
   List range = await getRange(db, fromdate, todate);
 
   for (List row in range) {
@@ -121,8 +121,6 @@ String counts_to_str(int counts, int total) {
 
 Future<List<Color>> loadColorData(
     Database db, String date, Map rev_color_names) async {
-  await createView();
-
   bool _rowExists = (await rowExists(db, date)) == true;
   List _colordata = _rowExists
       ? (await loadData(db, date))

@@ -21,11 +21,11 @@ class _AnalyticsState extends State<Analytics> {
 
   @override
   void initState() {
-    todate = DateFormat('dd-MM-yyyy').parse(DateFormat('dd-MM-yyyy')
+    todate = DateFormat('yyyy-MM-dd').parse(DateFormat('yyyy-MM-dd')
         .format(DateTime.now())); //loses time information
     fromdate = todate.subtract(Duration(days: 7));
-    todate_str = DateFormat('dd-MM-yyyy').format(todate);
-    fromdate_str = DateFormat('dd-MM-yyyy').format(fromdate);
+    todate_str = DateFormat('yyyy-MM-dd').format(todate);
+    fromdate_str = DateFormat('yyyy-MM-dd').format(fromdate);
 
     getColorCounts(fromdate_str, todate_str).then((value) => setState(() {
           counts = value;
@@ -75,7 +75,7 @@ class _AnalyticsState extends State<Analytics> {
                       ),
                       TextButton(
                         child: Text(
-                          fromdate_str,
+                          invDF(fromdate_str),
                           style: TextStyle(fontSize: 18),
                         ),
                         onPressed: () async {
@@ -103,7 +103,7 @@ class _AnalyticsState extends State<Analytics> {
                             setState(() {
                               fromdate = picked;
                               fromdate_str =
-                                  DateFormat("dd-MM-yyyy").format(fromdate);
+                                  DateFormat("yyyy-MM-dd").format(fromdate);
                             });
                             Map value =
                                 await getColorCounts(fromdate_str, todate_str);
@@ -120,7 +120,7 @@ class _AnalyticsState extends State<Analytics> {
                       ),
                       TextButton(
                         child: Text(
-                          todate_str,
+                          invDF(todate_str),
                           style: TextStyle(fontSize: 18),
                         ),
                         onPressed: () async {
@@ -148,7 +148,7 @@ class _AnalyticsState extends State<Analytics> {
                             setState(() {
                               todate = picked;
                               todate_str =
-                                  DateFormat("dd-MM-yyyy").format(todate);
+                                  DateFormat("yyyy-MM-dd").format(todate);
                             });
                             Map value =
                                 await getColorCounts(fromdate_str, todate_str);

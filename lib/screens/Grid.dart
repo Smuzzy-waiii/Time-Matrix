@@ -64,7 +64,7 @@ class _GridState extends State<Grid> {
   List<Color> colordata;
 
   Database db;
-  String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  String date = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   @override
   void initState() {
@@ -113,11 +113,11 @@ class _GridState extends State<Grid> {
                                     });
 
                                     DateTime _date =
-                                        DateFormat("dd-MM-yyyy").parse(date);
+                                        DateFormat("yyyy-MM-dd").parse(date);
                                     _date = _date.subtract(Duration(days: 1));
 
                                     setState(() {
-                                      date = DateFormat("dd-MM-yyyy")
+                                      date = DateFormat("yyyy-MM-dd")
                                           .format(_date);
                                     });
                                     loadColorData(db, date, rev_color_names)
@@ -135,7 +135,7 @@ class _GridState extends State<Grid> {
                                           colordata = null;
                                         });
                                         DateTime currDate =
-                                            DateFormat('dd-MM-yyyy')
+                                            DateFormat('yyyy-MM-dd')
                                                 .parse(date);
                                         final DateTime picked =
                                             await showDatePicker(
@@ -146,7 +146,7 @@ class _GridState extends State<Grid> {
                                         if (picked != null &&
                                             picked != currDate)
                                           setState(() {
-                                            date = DateFormat("dd-MM-yyyy")
+                                            date = DateFormat("yyyy-MM-dd")
                                                 .format(picked);
                                           });
                                         loadColorData(db, date, rev_color_names)
@@ -157,7 +157,7 @@ class _GridState extends State<Grid> {
                                         });
                                       },
                                       child: Text(
-                                        date,
+                                        invDF(date),
                                         style: TextStyle(
                                           fontSize: 19,
                                         ),
@@ -166,9 +166,9 @@ class _GridState extends State<Grid> {
                                 icon: Icon(Icons.keyboard_arrow_right),
                                 onPressed: () {
                                   DateTime currDate =
-                                      DateFormat('dd-MM-yyyy').parse(date);
-                                  DateTime todayte = DateFormat('dd-MM-yyyy')
-                                      .parse(DateFormat('dd-MM-yyyy').format(
+                                      DateFormat('yyyy-MM-dd').parse(date);
+                                  DateTime todayte = DateFormat('yyyy-MM-dd')
+                                      .parse(DateFormat('yyyy-MM-dd').format(
                                           DateTime
                                               .now())); //loses time information
                                   if (currDate == todayte) {
@@ -194,11 +194,11 @@ class _GridState extends State<Grid> {
                                     });
 
                                     DateTime _date =
-                                        DateFormat("dd-MM-yyyy").parse(date);
+                                        DateFormat("yyyy-MM-dd").parse(date);
                                     _date = _date.add(Duration(days: 1));
 
                                     setState(() {
-                                      date = DateFormat("dd-MM-yyyy")
+                                      date = DateFormat("yyyy-MM-dd")
                                           .format(_date);
                                     });
                                     loadColorData(db, date, rev_color_names)

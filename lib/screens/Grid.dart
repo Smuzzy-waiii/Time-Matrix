@@ -13,21 +13,23 @@ import 'package:collection/collection.dart';
 Function eq = const ListEquality().equals;
 
 void save(Database db, List buttondata, String date, Map color_names) async {
-  Database db = await DatabaseHelper.instance.database;
+  //Database db = await DatabaseHelper.instance.database;
 
   if (await rowExists(db, date) == false) {
-    if (!eq(buttondata, List.generate(24 * 4, (index) => null))) {
+    if (!eq(buttondata.map((e) => (Colors.white == e) ? null : e).toList(),
+        List.generate(24 * 4, (index) => null))) {
       await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
           <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
     }
   } else {
     await db.rawDelete("Delete from my_table where date = ?", [date]);
-    if (!eq(buttondata, List.generate(24 * 4, (index) => null))) {
+    if (!eq(buttondata.map((e) => (Colors.white == e) ? null : e).toList(),
+        List.generate(24 * 4, (index) => null))) {
       await db.rawInsert("INSERT INTO my_table VALUES(${bindings()})",
           <dynamic>[date] + buttondata.map((e) => color_names[e]).toList());
     }
   }
-  await createView();
+  createView();
   //print("This happened");
 }
 
@@ -68,15 +70,14 @@ class _GridState extends State<Grid> {
   void initState() {
     rev_color_names = color_names.map((k, v) => MapEntry(v, k));
     initDB().then((_db) {
-      createView().then((v) {
-        loadColorData(_db, date, rev_color_names).then((value) {
-          setState(() {
-            db = _db;
-            colordata = value;
-          });
+      loadColorData(_db, date, rev_color_names).then((value) {
+        setState(() {
+          db = _db;
+          colordata = value;
         });
       });
     });
+    ;
     super.initState();
   }
 
@@ -106,7 +107,7 @@ class _GridState extends State<Grid> {
                               IconButton(
                                   icon: Icon(Icons.keyboard_arrow_left),
                                   //iconSize: 10
-                                  onPressed: () {
+                                  onPressed: () async {
                                     setState(() {
                                       colordata = null;
                                     });
@@ -266,7 +267,7 @@ class _GridState extends State<Grid> {
                                                       ? colordata[
                                                           gi_to_li(i, j)]
                                                       : Colors.white),
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 setState(() {
                                                   Color currColor = (colordata[
                                                               gi_to_li(i, j)] !=
@@ -284,21 +285,28 @@ class _GridState extends State<Grid> {
                                                         colors[pos + 1];
                                                   }
                                                 });
+                                                if (eq(
+                                                    colordata
+                                                        .map((e) =>
+                                                            (Colors.white == e)
+                                                                ? null
+                                                                : e)
+                                                        .toList(),
+                                                    List.generate(24 * 4,
+                                                        (index) => null))) {
+                                                  save(db, colordata, date,
+                                                      color_names);
+                                                } else {
+                                                  saveOne(
+                                                      db,
+                                                      i,
+                                                      j,
+                                                      date,
+                                                      color_names[colordata[
+                                                          gi_to_li(i, j)]]);
+                                                }
                                               },
-                                              /*color: (colordata[gi_to_li(i, j)] != null)
-                                          ? colordata[gi_to_li(i, j)]
-                                          : Colors.white,*/
-                                              child: i != -1
-                                                  ? Container()
-                                                  : FittedBox(
-                                                      fit: BoxFit.contain,
-                                                      child: Text(
-                                                        () {
-                                                          return "${15 * j}-${15 * (j + 1)}";
-                                                        }(),
-                                                        style: TextStyle(
-                                                            fontSize: 15),
-                                                      ))),
+                                              child: Container()),
                                         ),
                                       ),
                                       if (j < 3) SizedBox(width: 3)
@@ -334,17 +342,40 @@ class _GridState extends State<Grid> {
                   child: ElevatedButton(
                     child: Text("Clear all"),
                     onPressed: () {
-                      setState(() {
-                        colordata = List.generate(24 * 4, (index) => null);
-                      });
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                title: Text("Clear All"),
+                                content: Text(
+                                    "Are you sure you want to clear all data ?"),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Cancel")),
+                                  TextButton(
+                                    child: Text("Clear"),
+                                    onPressed: () async {
+                                      setState(() {
+                                        colordata = List.generate(
+                                            24 * 4, (index) => null);
+                                      });
+                                      Navigator.of(context).pop();
+                                      await save(
+                                          db, colordata, date, color_names);
+                                    },
+                                  )
+                                ],
+                              ));
                     },
                   ),
                 ),
-                ElevatedButton(
+                /*ElevatedButton(
                     onPressed: () {
                       save(db, colordata, date, color_names);
                     },
-                    child: Text("Save")),
+                    child: Text("Save")),*/
                 Text(
                   "Fill Mode:",
                   style: TextStyle(color: Colors.white),

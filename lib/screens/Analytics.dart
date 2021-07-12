@@ -181,15 +181,30 @@ class _AnalyticsState extends State<Analytics> {
                             gap,
                             Text("Days filled:"),
                             gap,
-                            Text("Studied:"),
+                            Text(
+                              "Studied:",
+                              style: TextStyle(color: Colors.green),
+                            ),
                             gap,
-                            Text("Relaxing:"),
+                            Text(
+                              "Relaxing:",
+                              style: TextStyle(color: Colors.red),
+                            ),
                             gap,
-                            Text("Class hours:"),
+                            Text(
+                              "Class hours:",
+                              style: TextStyle(color: Colors.blue),
+                            ),
                             gap,
-                            Text("Daily Activites:"),
+                            Text(
+                              "Daily Activites:",
+                              style: TextStyle(color: Colors.orange),
+                            ),
                             gap,
-                            Text("Sleep:"),
+                            Text(
+                              "Sleep:",
+                              style: TextStyle(color: Colors.yellow),
+                            ),
                             gap,
                             Text("Unfilled:"),
                           ]),
@@ -202,7 +217,9 @@ class _AnalyticsState extends State<Analytics> {
                           gap,
                           counts == null
                               ? Text('loading...')
-                              : Text(counts_to_str(counts["studied"], total)),
+                              : Text(
+                                  counts_to_str(counts["studied"], total),
+                                ),
                           gap,
                           counts == null
                               ? Text('loading...')

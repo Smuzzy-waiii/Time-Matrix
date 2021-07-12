@@ -35,10 +35,11 @@ Future<List> loadData(Database db, String date) async {
 }
 
 Future<List> getRange(Database db, String fromdate, String todate) async {
-  await createView(); //Drops view if already exists
+  //await createView(); //Drops view if already exists
   List<Map<String, Object>> result = await db.rawQuery(
-      'SELECT * FROM my_view WHERE date BETWEEN ? and ?', [fromdate, todate]);
+      "SELECT * FROM my_table WHERE date BETWEEN ? and ?", [fromdate, todate]);
   //result.forEach((row) => print(row.values));
+
   List range = result.map((row) => row.values.toList()).toList();
   //range.forEach((row) => print(row));
   return range;

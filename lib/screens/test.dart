@@ -49,28 +49,37 @@ class _TestState extends State<Test> {
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
-        child: Column(children: [
-          ElevatedButton(
-            child: Text("Read All"),
-            onPressed: () async {
-              _query();
-            },
-          ),
-          ElevatedButton(
-            child: Text("Delete all"),
-            onPressed: () {
-              delete_all();
-            },
-          ),
-          ElevatedButton(
-            child: Text("Test"),
-            onPressed: () {
-              List l = [null, null, null];
-              List m = List.generate(3, (index) => null);
-              print(eq(l, m));
-            },
-          ),
-        ]),
+        child: Column(
+          children: [
+            ElevatedButton(
+              child: Text('Read'),
+              onPressed: () async {
+                DatabaseHelper helper = await DatabaseHelper.instance;
+                Database db = await helper.database;
+                //DatabaseHelper dbHelper = await DatabaseHelper.instance;
+                await getColorCounts("20-06-2021", "20-06-2021");
+              },
+            ),
+            ElevatedButton(
+              child: Text("Read All"),
+              onPressed: () async {
+                _query();
+              },
+            ),
+            ElevatedButton(
+              child: Text("Delete all"),
+              onPressed: () {
+                delete_all();
+              },
+            ),
+            ElevatedButton(
+              child: Text("Test"),
+              onPressed: () {
+                print(invDF("2012-12-13"));
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

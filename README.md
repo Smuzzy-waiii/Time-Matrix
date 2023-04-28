@@ -1,6 +1,6 @@
 # Ttyl
 
-A new Flutter project.
+A Time Management application.
 
 ## Getting Started
 

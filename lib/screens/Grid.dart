@@ -95,7 +95,7 @@ class _GridState extends State<Grid> {
                     )
                   : CustomScrollView(slivers: <Widget>[
                       SliverPadding(
-                        padding: EdgeInsets.fromLTRB(10, 0, 0, 5),
+                        padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
                         sliver: SliverAppBar(
                           floating: true,
                           centerTitle: true,
@@ -160,6 +160,7 @@ class _GridState extends State<Grid> {
                                         invDF(date),
                                         style: TextStyle(
                                           fontSize: 19,
+                                          color: Colors.white,
                                         ),
                                       ))),
                               IconButton(

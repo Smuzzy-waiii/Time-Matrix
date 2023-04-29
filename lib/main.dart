@@ -30,7 +30,7 @@ class _HomeState extends State<Home> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         centerTitle: true,
-        title: Text("My Time App"),
+        title: Text("Time Matrix"),
         actions: [
           IconButton(
             onPressed: () {

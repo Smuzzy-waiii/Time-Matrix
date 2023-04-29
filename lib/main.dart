@@ -10,7 +10,7 @@ void main() {
       initialRoute: '/',
       routes: {'/': (context) => Home(), '/test': (context) => Test()},
       theme: new ThemeData(
-        primaryColor: Colors.orange,
+        primaryColor: Colors.blue[600],
         //elevatedButtonTheme: ElevatedButtonThemeData(
         //style: ElevatedButton.styleFrom(primary: Colors.blue)))));
       )));
@@ -107,7 +107,7 @@ class _HomeState extends State<Home> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.blue[600],
         selectedItemColor: Colors.black,
         currentIndex: currIndex,
         onTap: (int index) => setState(() {

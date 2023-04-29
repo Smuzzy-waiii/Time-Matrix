@@ -19,7 +19,7 @@ Future<Database> initDB() async {
 
 Future<bool> rowExists(Database db, String date) async {
   //Database db = await DatabaseHelper.instance.database;
-  var result = await db.rawQuery('SELECT * FROM my_view WHERE date="$date"');
+  var result = await db.rawQuery('SELECT * FROM my_table WHERE date="$date"');
   //print(result.isNotEmpty);
   return result.isNotEmpty;
 }
@@ -27,7 +27,7 @@ Future<bool> rowExists(Database db, String date) async {
 Future<List> loadData(Database db, String date) async {
   //Database db = await DatabaseHelper.instance.database;
   List<Map<String, Object>> result =
-      await db.rawQuery('SELECT * FROM my_view WHERE date=?', [date]);
+      await db.rawQuery('SELECT * FROM my_table WHERE date=?', [date]);
   //print(result);
   List colordata = result[0].values.toList().sublist(1);
   //print(colordata);
